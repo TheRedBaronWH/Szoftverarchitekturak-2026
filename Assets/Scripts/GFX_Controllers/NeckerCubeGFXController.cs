@@ -12,15 +12,31 @@ public class NeckerCubeGFXController : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    public void Invert()
+    private bool playingBackward = true;
+    private const float PlaybackSpeed = 1.0f;
+
+    private void Update()
     {
-        animator.speed = 1.0f;
-        animator.Play(AnimationName, 0, 0.0f);
+        if (!playingBackward)
+            return;
+
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+
+        float normalizedTime = state.normalizedTime;
+        normalizedTime -= Time.deltaTime * PlaybackSpeed / state.length;
+        normalizedTime = Mathf.Max(0f, normalizedTime);
+
+        animator.Play(state.fullPathHash, 0, normalizedTime);
     }
 
-    public void InvertBack()
+    public void InvertForward()
     {
-        animator.speed = -1.0f;
-        animator.Play(AnimationName, 0, 1.0f);
+        playingBackward = false;
+        animator.Play(AnimationName, 0, 0f);
+    }
+
+    public void InvertBackward()
+    {
+        playingBackward = true;
     }
 }
