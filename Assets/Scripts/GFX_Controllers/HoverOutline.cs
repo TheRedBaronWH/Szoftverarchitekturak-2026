@@ -8,10 +8,12 @@ public class HoverOutline : MonoBehaviour
     private void OnMouseEnter()
     {
         outline.SetActive(true);
+        gameObject.layer = LayerMask.NameToLayer("Foreground");
     }
 
     private void OnMouseExit()
     {
         outline.SetActive(false);
+        gameObject.layer = LayerMask.NameToLayer("Default");
     }
 }

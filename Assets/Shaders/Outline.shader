@@ -1,56 +1,72 @@
+
 Shader "Custom/Outline"
 {
     Properties
     {
-        _OutlineColor ("Outline Color", Color) = (1, 0.7, 0, 1)
-        _OutlineWidth ("Outline Width", Float) = 0.03
+        _Color ("Highlight Color", Color) = (1, 0.7, 0, 0.5)
     }
 
     SubShader
     {
-        Tags { "RenderType" = "Opaque" }
+        Tags
+        {
+            "RenderPipeline" = "UniversalPipeline"
+            "RenderType" = "Transparent"
+            "Queue" = "Transparent"
+        }
 
         Pass
         {
-            Cull Front
-            ZWrite On
+            Name "Outline"
 
-            CGPROGRAM
+            Tags
+            {
+                "LightMode" = "UniversalForward"
+            }
+
+            Cull Back
+            ZTest Always
+            ZWrite Off
+
+            Blend SrcAlpha OneMinusSrcAlpha
+
+            HLSLPROGRAM
+
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "UnityCG.cginc"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            fixed4 _OutlineColor;
-            float _OutlineWidth;
+            CBUFFER_START(UnityPerMaterial)
+                half4 _Color;
+            CBUFFER_END
 
-            struct appdata
+            struct Attributes
             {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
+                float4 positionOS : POSITION;
             };
 
-            struct v2f
+            struct Varyings
             {
-                float4 vertex : SV_POSITION;
+                float4 positionHCS : SV_POSITION;
             };
 
-            v2f vert(appdata v)
+            Varyings vert(Attributes input)
             {
-                v2f o;
+                Varyings output;
 
-                v.vertex.xyz += normalize(v.normal) * _OutlineWidth;
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                output.positionHCS =
+                    TransformObjectToHClip(input.positionOS.xyz);
 
-                return o;
+                return output;
             }
 
-            fixed4 frag(v2f i) : SV_Target
+            half4 frag(Varyings input) : SV_Target
             {
-                return _OutlineColor;
+                return _Color;
             }
 
-            ENDCG
+            ENDHLSL
         }
     }
 }
