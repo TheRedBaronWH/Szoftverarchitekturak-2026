@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
-    private int currentLevel = (int)SceneID.GameManagement;
+    private int currentLevel = -1;
 
     void Start()
     {
@@ -24,6 +24,12 @@ public class GameManager : MonoBehaviour
 
     public void MenuLoadLevel(int sceneID)
     {
+        if (currentLevel > 0)
+        {
+            Debug.LogError("MenuLoadLevel can not be used in game!");
+            return;
+        }
+
         currentLevel = sceneID;
 
         SceneManager.UnloadSceneAsync((int)SceneID.MainMenu);
@@ -33,14 +39,24 @@ public class GameManager : MonoBehaviour
 
     public void GameLoadLevel(int sceneID)
     {
+        if (currentLevel < 0)
+        {
+            Debug.LogError("GameLoadLevel can not be used in the main menu!", gameObject);
+            return;
+        }
+
         SceneManager.UnloadSceneAsync(currentLevel);
         SceneManager.LoadSceneAsync(sceneID, LoadSceneMode.Additive);
+
+        currentLevel = sceneID;
     }
 
     public void ExitToMainMenu()
     {
         SceneManager.UnloadSceneAsync(currentLevel);
         SceneManager.UnloadSceneAsync((int)SceneID.Player);
+
+        currentLevel = -1;
 
         LoadMainMenu();
     }
