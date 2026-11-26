@@ -129,6 +129,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1892297712}
   - component: {fileID: 1892297713}
+  - component: {fileID: 749320}
+  - component: {fileID: 749321}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -163,6 +165,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbc5c3184462d7146a027b24bd1374bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+--- !u!114 &749320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1892297711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 580bb59f185144eea34b50fb9fbb687b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::GameplayController
+  moveDuration: 0.4
+--- !u!114 &749321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1892297711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30afced9ae5f45e2b3a9521fe2d58317, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialControls
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

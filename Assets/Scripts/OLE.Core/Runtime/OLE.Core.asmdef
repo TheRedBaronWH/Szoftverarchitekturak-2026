@@ -1,0 +1,5 @@
+{
+  "name": "OLE.Core",
+  "rootNamespace": "OLE.Core",
+  "noEngineReferences": true
+}
