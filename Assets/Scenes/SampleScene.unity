@@ -803,6 +803,80 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
+--- !u!4 &749301 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
+  m_PrefabInstance: {fileID: 632988208}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &749302 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
+  m_PrefabInstance: {fileID: 297635150}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &749303 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
+  m_PrefabInstance: {fileID: 1745737452}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &749304 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
+  m_PrefabInstance: {fileID: 1873835546}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &749310
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 749311}
+  - component: {fileID: 749312}
+  m_Layer: 0
+  m_Name: Tutorial Board
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &749311
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749310}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &749312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db1645ab818425092f28f8ee7d90954, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialBoard
+  platforms:
+  - id: P1
+    cube: {fileID: 749301}
+  - id: P2
+    cube: {fileID: 749302}
+  - id: P3
+    cube: {fileID: 749303}
+  - id: P4
+    cube: {fileID: 749304}
+  standingOffset: {x: 0, y: 1, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -819,3 +893,4 @@ SceneRoots:
   - {fileID: 1673510888}
   - {fileID: 1150693736}
   - {fileID: 2139622061}
+  - {fileID: 749311}

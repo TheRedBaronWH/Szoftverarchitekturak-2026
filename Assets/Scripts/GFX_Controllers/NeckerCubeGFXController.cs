@@ -3,40 +3,55 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class NeckerCubeGFXController : MonoBehaviour
 {
+    private const string ClipName = "Necker_Cube|Transition";
+    private static readonly int State = Animator.StringToHash("Base Layer." + ClipName);
+
     private Animator animator;
+    private float duration = 1f;
+    private float progress;
+    private float target;
 
-    private const string AnimationName = @"Necker_Cube|Transition";
-
-    void Start()
+    private void Awake()
     {
         animator = GetComponent<Animator>();
+        animator.speed = 0f;
+        foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
+        {
+            if (clip.name == ClipName)
+                duration = Mathf.Max(0.01f, clip.length);
+        }
     }
 
-    private bool playingBackward = true;
-    private const float PlaybackSpeed = 1.0f;
+    private void Start()
+    {
+        ApplyPose();
+    }
+
+    public void InvertForward() => ShowMode(true, false);
+    public void InvertBackward() => ShowMode(false, false);
+
+    public void ShowMode(bool modeB, bool immediately)
+    {
+        target = modeB ? 1f : 0f;
+        if (immediately)
+        {
+            progress = target;
+            ApplyPose();
+        }
+    }
 
     private void Update()
     {
-        if (!playingBackward)
+        if (progress == target)
             return;
 
-        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
-
-        float normalizedTime = state.normalizedTime;
-        normalizedTime -= Time.deltaTime * PlaybackSpeed / state.length;
-        normalizedTime = Mathf.Max(0f, normalizedTime);
-
-        animator.Play(state.fullPathHash, 0, normalizedTime);
+        progress = Mathf.MoveTowards(progress, target, Time.deltaTime / duration);
+        ApplyPose();
     }
 
-    public void InvertForward()
+    private void ApplyPose()
     {
-        playingBackward = false;
-        animator.Play(AnimationName, 0, 0f);
-    }
-
-    public void InvertBackward()
-    {
-        playingBackward = true;
+        animator.Play(State, 0, progress);
+        animator.Update(0f);
     }
 }
