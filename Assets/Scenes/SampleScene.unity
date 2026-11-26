@@ -843,6 +843,16 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
   m_PrefabInstance: {fileID: 1150693736}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &749309 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
+  m_PrefabInstance: {fileID: 1460185152}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &749313 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
+  m_PrefabInstance: {fileID: 2060790622}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &749310
 GameObject:
   m_ObjectHideFlags: 0
@@ -904,7 +914,53 @@ MonoBehaviour:
     cube: {fileID: 749307}
   - id: P8
     cube: {fileID: 749308}
+  - id: P9
+    cube: {fileID: 749309}
+  - id: P10
+    cube: {fileID: 749313}
   standingOffset: {x: 0, y: 1, z: 0}
+  connectionMaterial: {fileID: 2100000, guid: a2b8111d16b145219221651c393149a6, type: 2}
+  layouts:
+  - levelId: tutorial
+    positions:
+    - {x: -3, y: 0, z: 0}
+    - {x: -1, y: 0, z: 0}
+    - {x: 1, y: 0, z: 0}
+    - {x: 3, y: 0.5, z: 1}
+    cameraSize: 3.5
+    platformColor: {r: 0.38, g: 0.64, b: 0.85, a: 1}
+    backgroundColor: {r: 0.035, g: 0.08, b: 0.15, a: 1}
+    connectionColor: {r: 0.24, g: 0.9, b: 0.82, a: 1}
+  - levelId: crossroads
+    positions:
+    - {x: -4, y: 0, z: -1}
+    - {x: -2.5, y: 0, z: -1}
+    - {x: -1, y: 0, z: -1}
+    - {x: 0.5, y: 0, z: -1}
+    - {x: -2.5, y: 1, z: 1}
+    - {x: -1, y: 2, z: 2.5}
+    - {x: 1, y: 2, z: 2.5}
+    - {x: 3, y: 2, z: 2.5}
+    cameraSize: 4.5
+    platformColor: {r: 0.78, g: 0.5, b: 0.65, a: 1}
+    backgroundColor: {r: 0.13, g: 0.055, b: 0.12, a: 1}
+    connectionColor: {r: 1, g: 0.6, b: 0.39, a: 1}
+  - levelId: skybridge
+    positions:
+    - {x: -5.5, y: 0, z: 0}
+    - {x: -3.5, y: 0, z: 0}
+    - {x: -2, y: 1, z: 2}
+    - {x: 0, y: 1.7, z: 2}
+    - {x: -2, y: 0, z: -1.8}
+    - {x: 2, y: 1, z: 0}
+    - {x: 3.5, y: 1, z: 0}
+    - {x: 0, y: 0, z: -1.8}
+    - {x: 5, y: 1.8, z: 1.2}
+    - {x: 6.5, y: 2, z: 2.5}
+    cameraSize: 5.5
+    platformColor: {r: 0.45, g: 0.73, b: 0.67, a: 1}
+    backgroundColor: {r: 0.025, g: 0.1, b: 0.105, a: 1}
+    connectionColor: {r: 0.6, g: 0.97, b: 0.44, a: 1}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ internal static class TutorialCampaign
 {
     public static GameSession CreateSession()
     {
-        return new GameSession(new[] { CreateLevel(), CreateChallenge() });
+        return new GameSession(new[] { CreateLevel(), CreateChallenge(), CreateSkybridge() });
     }
 
     internal static LevelDefinition CreateLevel()
@@ -37,5 +37,27 @@ internal static class TutorialCampaign
         };
 
         return new LevelDefinition("crossroads", "P1", "P8", platforms, connections);
+    }
+
+    private static LevelDefinition CreateSkybridge()
+    {
+        var platforms = new[] { "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10" };
+        var connections = new[]
+        {
+            new Connection("P1", "P2", openInA: true, openInB: false),
+            // The upper route needs a mode change on every bridge.
+            new Connection("P2", "P3", openInA: false, openInB: true),
+            new Connection("P3", "P4", openInA: true, openInB: false),
+            new Connection("P4", "P6", openInA: false, openInB: true),
+            // The lower route rejoins at P6 with fewer mode changes.
+            new Connection("P2", "P5", openInA: true, openInB: false),
+            new Connection("P5", "P8", openInA: false, openInB: true),
+            new Connection("P8", "P6", openInA: true, openInB: false),
+            new Connection("P6", "P7", openInA: true, openInB: false),
+            new Connection("P7", "P9", openInA: false, openInB: true),
+            new Connection("P9", "P10", openInA: true, openInB: false)
+        };
+
+        return new LevelDefinition("skybridge", "P1", "P10", platforms, connections);
     }
 }

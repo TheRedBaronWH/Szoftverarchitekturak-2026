@@ -26,6 +26,7 @@ namespace OLE.Core
         public string Platform { get; private set; }
         public BoardMode Mode { get; private set; }
         public bool IsMoving => pendingMove != null;
+        public bool IsPaused { get; private set; }
         public bool IsLevelComplete => Platform == Level.Goal;
         public bool HasNextLevel => levelIndex + 1 < levels.Count;
         public bool IsGameComplete => IsLevelComplete && !HasNextLevel;
@@ -48,7 +49,7 @@ namespace OLE.Core
         public bool TryStartMove(string target, out Move move)
         {
             move = null;
-            if (IsMoving || IsLevelComplete || !Level.CanTraverse(Platform, target, Mode))
+            if (IsPaused || IsMoving || IsLevelComplete || !Level.CanTraverse(Platform, target, Mode))
                 return false;
 
             move = new Move(Platform, target);
@@ -58,7 +59,7 @@ namespace OLE.Core
 
         public bool CompleteMove(Move move)
         {
-            if (move == null || !ReferenceEquals(move, pendingMove))
+            if (IsPaused || move == null || !ReferenceEquals(move, pendingMove))
                 return false;
 
             Platform = move.To;
@@ -68,14 +69,21 @@ namespace OLE.Core
 
         public bool TryToggleMode()
         {
-            if (IsMoving) return false;
+            if (IsPaused || IsMoving) return false;
             Mode = Mode == BoardMode.A ? BoardMode.B : BoardMode.A;
             return true;
         }
 
+        public void Pause() => IsPaused = true;
+
+        public void Resume() => IsPaused = false;
+
+        // Leaving the scene keeps the last reached platform and invalidates the old callback.
+        public void CancelMove() => pendingMove = null;
+
         public HintStep GetHint()
         {
-            if (IsMoving || IsLevelComplete) return null;
+            if (IsPaused || IsMoving || IsLevelComplete) return null;
             foreach (var state in RouteHints.Walk(Level, Platform, Mode))
                 if (state.Platform == Level.Goal) return state.First;
             return null;
@@ -87,7 +95,7 @@ namespace OLE.Core
 
         public bool TryNextLevel()
         {
-            if (!IsLevelComplete || !HasNextLevel) return false;
+            if (IsPaused || !IsLevelComplete || !HasNextLevel) return false;
             int next = levelIndex + 1;
             SetPosition(next, levels[next].Start, BoardMode.A);
             return true;
@@ -107,6 +115,7 @@ namespace OLE.Core
             Platform = platform;
             Mode = mode;
             pendingMove = null;
+            IsPaused = false;
         }
     }
 }
