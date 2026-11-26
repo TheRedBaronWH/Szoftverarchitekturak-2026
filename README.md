@@ -23,7 +23,7 @@ A GameManagement marad betöltve; a többi jelenet betöltését és kiürítés
 
 | Művelet | Kezelés |
 | --- | --- |
-| Mozgás | Kattintás egy elérhető platformra vagy nyitott lépcsőre; nyílbillentyűk |
+| Mozgás | A platform billentyűjele; kattintás a platformra, a kis feliratára vagy a nyitott lépcsőre. A nyilak választható kiegészítésként működnek. |
 | A/B nézőpont | **Nézőpont** gomb vagy Space |
 | Kézi mentés | **Mentés** gomb vagy F5 |
 | Kézi betöltés | **Kézi betöltés** gomb vagy F9 |
@@ -32,7 +32,7 @@ A GameManagement marad betöltve; a többi jelenet betöltését és kiürítés
 | Tipp | H; a célplatform kiemelést kap |
 | Diagnosztika | F3 |
 
-A platformok fölött **mindig látszik a hozzájuk tartozó billentyűjel**: 1–9, 0, −, =, majd Q, E, T, Y, U, I, O, P. A látható jel az aktuális billentyűzetkiosztást követi, így magyar vagy orosz kiosztásnál is a megfelelő karakter látszik. Az első tíz platformhoz a numerikus billentyűzet 1–9 és 0 gombjai is használhatók. A P1–P20 technikai azonosítók és a kapcsolatok szöveges listája csak F3 után jelennek meg. Mozgás és A/B-animáció alatt újabb nézőpontváltás nem indul.
+A platformok alatt **mindig látszik a hozzájuk tartozó billentyűjel**: 1–9, 0, −, =, majd Q, E, T, Y, U, I, O, P. A látható jel az aktuális billentyűzetkiosztást követi, így magyar vagy orosz kiosztásnál is a megfelelő karakter látszik. Az első tíz platformhoz a numerikus billentyűzet 1–9 és 0 gombjai is használhatók. A P1–P20 technikai azonosítók és a kapcsolatok szöveges listája csak F3 után jelennek meg. Mozgás és A/B-animáció alatt újabb nézőpontváltás nem indul.
 
 ## Mentés és betöltés
 
@@ -139,3 +139,17 @@ A Presentation / **Perspective Seams** kapcsolóval a kísérleti megjelenítés
 Az ötödik pályán a **türkiz A/B-jelű kapcsolók**: P4, P9, P14 és P18. A többi négy pálya továbbra is bárhol váltható. Egy geometriai keresztezés önmagában nem kapcsolat: a különböző magasságú hidak egymás fölött haladnak el. A minimumút 25 művelet; mind a négy kapcsolót fel kell keresni és vissza kell térni a megfelelő csomóponthoz. A H-tipp ezt a korlátozást is figyelembe veszi.
 
 A LabyrinthTests független kereséssel ellenőrzi a 34 elérhető platform/mód állapotot, a zsákutcákból kijutást, a kapcsolók szükségességét, a mentést és a tippeket. A PresentationGeometry a csatlakozófelület teljes szélességét, a talpút végpontjait és a perspektívarés vetületi folytonosságát ellenőrzi egy különálló, csak tesztekhez használt matematikai segédkóddal. Ez nem helyettesíti a Unity Play Mode, a renderelés és a Windows-build próbáját.
+
+## Átmenetek és kijelölés javítása
+
+Az elsődleges kezelés változatlanul a platformokhoz tartozó billentyű. A kis feliratok a kockák alatt jelennek meg, körülbelül 12–14 képpontos betűkkel; nem takarják a figurát vagy a lépcső bejáratát. A feliratra kattintás ugyanazt a mozgáskérést indítja, mint a billentyű. A nyilak a képernyő iránya szerint választanak nyitott szomszédot; közel azonos iránynál a közelebbi cél nyer. A zárt kapcsolatokon sem billentyűvel, sem kattintással, sem nyíllal nem lehet átmenni.
+
+A SampleScene 12 eredeti kockát tartalmaz, de a TutorialBoard 10-et regisztrál. A két regisztrálatlan bemutatókocka a jelenetfájlban megmarad; játék közben inaktív, így nem takarja el a célt, és nem fogja el a kattintást. A lépcsők pontos MeshColliderje a megrajzolt meshből épül fel, a perspektivikus félhidaknál is. A zárt vagy animáció alatt álló lépcső nem kattintható; az átmenet végén a nyitott lépcső újra kiválasztható.
+
+### Öt pálya ellenőrzése
+
+A `dotnet run --project Tests/TutorialRoute` a TraversalMatrixTests segítségével mind az öt pálya összes elérhető platform/mód állapotából ellenőrzi az engedélyezett és tiltott lépéseket, a visszautat és a célplatform lezárását. A PresentationGeometry a nyilak irányválasztását is ellenőrzi.
+
+A natív Unity-ellenőrzéshez indítsd a **GameManagement → Play → Új játék** folyamatot, várd meg, hogy a figura álljon, majd válaszd a **Tools → OLE → Check all level boards (Play Mode)** menüpontot. Ez a tényleges Unity Animatorral és fizikával végigellenőrzi az öt tábla mindkét A/B állapotát: az aktív kockák számát, a feliratok célját, a lépcsők MeshCollider-raycastját és a mozgási végpontokat mindkét irányban. Az eredmény a Console ablakban `OLE board check PASS`, hiba esetén konkrét pálya és kapcsolat. A futó játékállapot és a mentési fájlok nem módosulnak; az eredeti tábla a vizsgálat után visszaáll.
+
+Kézi regresszió: tutorial P3-on válts B-re, majd külön próbáld a 4-es billentyűt, a 4-es kis feliratot és a lépcsőre kattintást. R után ismételd meg. A módban a P3–P4 kapcsolat maradjon zárt.

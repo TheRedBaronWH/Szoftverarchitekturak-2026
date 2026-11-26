@@ -36,7 +36,7 @@ public sealed class PlatformSurface : MonoBehaviour
     public bool IsChanging => cubeAnimation != null && cubeAnimation.IsTransitioning;
     public float ModeBlend => cubeAnimation != null ? cubeAnimation.ModeBlend : 0;
     public Vector3 LabelAnchor => source != null
-        ? new Vector3(source.bounds.center.x, source.bounds.max.y + 0.12f, source.bounds.center.z) : Support.position;
+        ? new Vector3(source.bounds.center.x, source.bounds.min.y - 0.12f, source.bounds.center.z) : Support.position;
     public Vector3 DockToward(Vector3 target, Vector3 side) => face.Dock(target, WalkwayPath.Width, side);
 
     public void Initialize(SceneMaterials materials)

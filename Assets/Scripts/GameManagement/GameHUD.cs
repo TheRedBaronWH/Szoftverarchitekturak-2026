@@ -49,6 +49,8 @@ public sealed class GameHUD : MonoBehaviour
         RectTransform rect = button.GetComponent<RectTransform>();
         rect.anchoredPosition = new Vector2(x,1); rect.sizeDelta = new Vector2(180,40);
         button.GetComponentInChildren<Text>().fontSize = 19;
+        // Gameplay owns arrow input; a clicked HUD button must not keep navigation focus.
+        button.onClick.AddListener(() => ClearSelection(parent));
         return button;
     }
 

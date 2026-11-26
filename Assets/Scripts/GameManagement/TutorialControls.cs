@@ -103,9 +103,7 @@ public sealed class TutorialControls : MonoBehaviour
         if (MenuUI.IsPointerOverUI(mouse.position.ReadValue()))
             return;
 
-        Ray ray = camera.ScreenPointToRay(mouse.position.ReadValue());
-        if (Physics.Raycast(ray, out RaycastHit hit))
-            game.SelectCollider(hit.collider);
+        game.SelectScreenPosition(mouse.position.ReadValue());
     }
 
     // Passive labels only. All input is handled by the Input System above.

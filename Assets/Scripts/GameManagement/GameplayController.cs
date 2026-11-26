@@ -125,7 +125,17 @@ public sealed class GameplayController : MonoBehaviour
 
     public void RequestDirectionalMove(Vector2 direction)
     {
-        if (IsReady) RequestMove(board.DirectionalTarget(session.Platform, direction));
+        if (!IsReady || IsInputBlocked || IsMoving || HasWon) return;
+        string target = board.DirectionalTarget(session.Platform, direction);
+        if (target != null) RequestMove(target);
+        else Feedback = "Ebben az irányban nincs nyitott út. Space: A/B · A cél a felirat szerinti billentyűvel is kiválasztható.";
+    }
+
+    public void SelectScreenPosition(Vector2 screen)
+    {
+        if (!IsReady) return;
+        string target = board.PickTarget(screen,session.Platform);
+        if (target != session.Platform) RequestMove(target);
     }
 
     private void BindScene(int sceneID)

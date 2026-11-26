@@ -10,6 +10,7 @@ internal static class Program
         string[] captions = { "1","2","3","4","5","6","7","8","9","0","−","=","Q","E","T","Y","U","I","O","P" };
         for (int i=0;i<20;i++) Check(PlatformShortcuts.Caption("P"+(i+1))==captions[i],"Every platform has its actual key caption");
         Check(new HashSet<UnityEngine.InputSystem.Key>(PlatformShortcuts.Keys).Count==20,"All twenty shortcuts are distinct");
+        NavigationTests.Run();
         foreach (bool diamond in new[] { false,true })
         foreach (bool tilted in new[] { false,true })
         {

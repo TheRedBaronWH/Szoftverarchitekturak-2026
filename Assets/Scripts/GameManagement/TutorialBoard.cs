@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 using OLE.Core;
 
 [DefaultExecutionOrder(75)]
-public sealed class TutorialBoard : MonoBehaviour
+public sealed partial class TutorialBoard : MonoBehaviour
 {
     [Serializable] private struct Platform { public string id; public Transform cube; }
     [Serializable] private struct Layout
@@ -54,6 +54,19 @@ public sealed class TutorialBoard : MonoBehaviour
             SceneManager.MoveGameObjectToScene(template, gameObject.scene);
             template.name = "Platform template";
             template.SetActive(false);
+        }
+        HideUnboundCubes();
+    }
+
+    private void HideUnboundCubes()
+    {
+        // SampleScene also contains two demonstration cubes outside the serialized bank.
+        // Keep them in the scene asset, but hide their mesh, outline and collider at runtime.
+        foreach (NeckerCubeGFXController cube in FindObjectsByType<NeckerCubeGFXController>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (cube.gameObject.scene != gameObject.scene || cube.transform.IsChildOf(template != null ? template.transform : transform)) continue;
+            bool registered = bank.Exists(p => p.cube != null && cube.transform.IsChildOf(p.cube));
+            if (!registered) cube.gameObject.SetActive(false);
         }
     }
 
@@ -188,13 +201,45 @@ public sealed class TutorialBoard : MonoBehaviour
         if (level == null || Camera.main == null || !TryGetPosition(current, out Vector3 origin)) return null;
         Vector3 start = Camera.main.WorldToScreenPoint(origin);
         string result = null;
-        float best = 0.35f;
+        float best = 0.35f, bestDistance = float.PositiveInfinity;
         foreach (string id in level.Platforms)
         {
             if (!level.CanTraverse(current, id, mode) || !TryGetPosition(id, out Vector3 target)) continue;
             Vector2 delta = (Vector2)(Camera.main.WorldToScreenPoint(target) - start);
-            float score = Vector2.Dot(delta.normalized, direction.normalized);
-            if (score > best) { best = score; result = id; }
+            if (ScreenNavigation.IsBetter(delta, direction, best, bestDistance, out float score))
+            { best = score; bestDistance = delta.sqrMagnitude; result = id; }
+        }
+        return result;
+    }
+
+    public string PickTarget(Vector2 screen, string current)
+    {
+        string badge = PickBadge(screen);
+        if (badge != null) return badge;
+        RefreshBridges();
+        Physics.SyncTransforms();
+        RaycastHit[] hits = Physics.RaycastAll(Camera.main.ScreenPointToRay(screen), Mathf.Infinity,
+            Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+        Array.Sort(hits, (a,b) => a.distance.CompareTo(b.distance));
+        foreach (RaycastHit hit in hits)
+        {
+            string id = Identify(hit.collider,current);
+            if (id != null && id != current) return id;
+        }
+        return null;
+    }
+
+    private string PickBadge(Vector2 screen)
+    {
+        if (!LabelsVisible) return null;
+        Vector2 gui = new Vector2(screen.x,Screen.height-screen.y);
+        string result = null; float nearest = float.PositiveInfinity;
+        foreach (string id in level.Platforms)
+        {
+            Rect rect = BadgeRect(id);
+            if (!rect.Contains(gui)) continue;
+            float distance = (rect.center-gui).sqrMagnitude;
+            if (distance < nearest) { result=id; nearest=distance; }
         }
         return result;
     }
@@ -301,10 +346,11 @@ public sealed class TutorialBoard : MonoBehaviour
             labelStyle = new GUIStyle(GUI.skin.box);
             labelStyle.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             labelStyle.alignment = TextAnchor.MiddleCenter;
-            labelStyle.fontStyle = FontStyle.Bold;
+            labelStyle.fontStyle = FontStyle.Normal;
+            labelStyle.padding = new RectOffset(2,2,1,1);
+            labelStyle.wordWrap = false;
         }
-        float scale = Mathf.Clamp(Screen.height / 720f, 0.9f, 1.6f);
-        labelStyle.fontSize = Mathf.RoundToInt(17 * scale);
+        labelStyle.fontSize = Mathf.RoundToInt(12 * BadgeScale);
         foreach (string id in level.Platforms)
         {
             if (!surfaces.TryGetValue(id, out PlatformSurface surface)) continue;
@@ -316,9 +362,17 @@ public sealed class TutorialBoard : MonoBehaviour
             Color previous = GUI.backgroundColor;
             GUI.backgroundColor = id == currentPlatform ? new Color(0.1f,0.8f,0.68f)
                 : id == level.Goal ? new Color(1,0.72f,0.2f) : Color.white;
-            float width = (DebugVisible ? 130 : pad ? 90 : 36) * scale;
-            if (screen.z > 0) GUI.Box(new Rect(screen.x-width/2, Screen.height-screen.y-30*scale, width, 28*scale), caption, labelStyle);
+            if (screen.z > 0) GUI.Box(BadgeRect(id), caption, labelStyle);
             GUI.backgroundColor = previous;
         }
+    }
+
+    private float BadgeScale => Mathf.Clamp(Screen.height/720f,0.9f,1.15f);
+    private Rect BadgeRect(string id)
+    {
+        Vector3 screen = Camera.main.WorldToScreenPoint(surfaces[id].LabelAnchor);
+        bool pad = level.HasSwitchPads && level.CanToggleAt(id);
+        float width = (DebugVisible ? 106 : pad ? 66 : 26)*BadgeScale;
+        return screen.z > 0 ? new Rect(screen.x-width/2,Screen.height-screen.y+3,width,20*BadgeScale) : default;
     }
 }

@@ -3,6 +3,15 @@
 using System;
 namespace UnityEngine
 {
+    public struct Vector2
+    {
+        public float x,y;
+        public Vector2(float x,float y) { this.x=x;this.y=y; }
+        public float sqrMagnitude => x*x+y*y;
+        public Vector2 normalized => sqrMagnitude>0.000001f ? this/MathF.Sqrt(sqrMagnitude) : new Vector2(0,0);
+        public static Vector2 operator /(Vector2 v,float f) => new Vector2(v.x/f,v.y/f);
+        public static float Dot(Vector2 a,Vector2 b) => a.x*b.x+a.y*b.y;
+    }
     public struct Vector3
     {
         public float x,y,z;

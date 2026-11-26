@@ -140,6 +140,7 @@ internal static class Program
         CompletionTimerTests.Run();
         RemainingIntegrationTests.Run();
         LabyrinthTests.Run();
+        TraversalMatrixTests.Run();
     }
 
     private static void CheckCampaignSaves()
