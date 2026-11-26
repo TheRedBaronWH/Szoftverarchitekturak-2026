@@ -1,0 +1,301 @@
+trace	command	accepted	level	platform	mode	pending	levelComplete	gameComplete
+	go:P1	0	tutorial	P1	A	-	0	0
+	go:P2	1	tutorial	P1	A	P2	0	0
+	go:P3	0	tutorial	P1	A	-	0	0
+	go:P4	0	tutorial	P1	A	-	0	0
+	go:Q1	0	tutorial	P1	A	-	0	0
+	go:Q2	0	tutorial	P1	A	-	0	0
+	go:missing	0	tutorial	P1	A	-	0	0
+	go:(null)	0	tutorial	P1	A	-	0	0
+	arrive	0	tutorial	P1	A	-	0	0
+	switch	1	tutorial	P1	B	-	0	0
+	restart	1	tutorial	P1	A	-	0	0
+	next	0	tutorial	P1	A	-	0	0
+	new	1	tutorial	P1	A	-	0	0
+	null	0	tutorial	P1	A	-	0	0
+	stale	0	tutorial	P1	A	-	0	0
+go:P2	go:P1	0	tutorial	P1	A	P2	0	0
+go:P2	go:P2	0	tutorial	P1	A	P2	0	0
+go:P2	go:P3	0	tutorial	P1	A	P2	0	0
+go:P2	go:P4	0	tutorial	P1	A	P2	0	0
+go:P2	go:Q1	0	tutorial	P1	A	P2	0	0
+go:P2	go:Q2	0	tutorial	P1	A	P2	0	0
+go:P2	go:missing	0	tutorial	P1	A	P2	0	0
+go:P2	go:(null)	0	tutorial	P1	A	P2	0	0
+go:P2	arrive	1	tutorial	P2	A	-	0	0
+go:P2	switch	0	tutorial	P1	A	P2	0	0
+go:P2	restart	1	tutorial	P1	A	-	0	0
+go:P2	next	0	tutorial	P1	A	P2	0	0
+go:P2	new	1	tutorial	P1	A	-	0	0
+go:P2	null	0	tutorial	P1	A	P2	0	0
+go:P2	stale	0	tutorial	P1	A	P2	0	0
+switch	go:P1	0	tutorial	P1	B	-	0	0
+switch	go:P2	0	tutorial	P1	B	-	0	0
+switch	go:P3	0	tutorial	P1	B	-	0	0
+switch	go:P4	0	tutorial	P1	B	-	0	0
+switch	go:Q1	0	tutorial	P1	B	-	0	0
+switch	go:Q2	0	tutorial	P1	B	-	0	0
+switch	go:missing	0	tutorial	P1	B	-	0	0
+switch	go:(null)	0	tutorial	P1	B	-	0	0
+switch	arrive	0	tutorial	P1	B	-	0	0
+switch	switch	1	tutorial	P1	A	-	0	0
+switch	restart	1	tutorial	P1	A	-	0	0
+switch	next	0	tutorial	P1	B	-	0	0
+switch	new	1	tutorial	P1	A	-	0	0
+switch	null	0	tutorial	P1	B	-	0	0
+switch	stale	0	tutorial	P1	B	-	0	0
+go:P2 arrive	go:P1	1	tutorial	P2	A	P1	0	0
+go:P2 arrive	go:P2	0	tutorial	P2	A	-	0	0
+go:P2 arrive	go:P3	1	tutorial	P2	A	P3	0	0
+go:P2 arrive	go:P4	0	tutorial	P2	A	-	0	0
+go:P2 arrive	go:Q1	0	tutorial	P2	A	-	0	0
+go:P2 arrive	go:Q2	0	tutorial	P2	A	-	0	0
+go:P2 arrive	go:missing	0	tutorial	P2	A	-	0	0
+go:P2 arrive	go:(null)	0	tutorial	P2	A	-	0	0
+go:P2 arrive	arrive	0	tutorial	P2	A	-	0	0
+go:P2 arrive	switch	1	tutorial	P2	B	-	0	0
+go:P2 arrive	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive	next	0	tutorial	P2	A	-	0	0
+go:P2 arrive	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive	null	0	tutorial	P2	A	-	0	0
+go:P2 arrive	stale	0	tutorial	P2	A	-	0	0
+go:P2 arrive go:P1	go:P1	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P1	go:P2	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P1	go:P3	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P1	go:P4	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P1	go:Q1	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P1	go:Q2	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P1	go:missing	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P1	go:(null)	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P1	arrive	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P1	switch	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P1	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P1	next	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P1	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P1	null	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P1	stale	0	tutorial	P2	A	P1	0	0
+go:P2 arrive go:P3	go:P1	0	tutorial	P2	A	P3	0	0
+go:P2 arrive go:P3	go:P2	0	tutorial	P2	A	P3	0	0
+go:P2 arrive go:P3	go:P3	0	tutorial	P2	A	P3	0	0
+go:P2 arrive go:P3	go:P4	0	tutorial	P2	A	P3	0	0
+go:P2 arrive go:P3	go:Q1	0	tutorial	P2	A	P3	0	0
+go:P2 arrive go:P3	go:Q2	0	tutorial	P2	A	P3	0	0
+go:P2 arrive go:P3	go:missing	0	tutorial	P2	A	P3	0	0
+go:P2 arrive go:P3	go:(null)	0	tutorial	P2	A	P3	0	0
+go:P2 arrive go:P3	arrive	1	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3	switch	0	tutorial	P2	A	P3	0	0
+go:P2 arrive go:P3	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3	next	0	tutorial	P2	A	P3	0	0
+go:P2 arrive go:P3	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3	null	0	tutorial	P2	A	P3	0	0
+go:P2 arrive go:P3	stale	0	tutorial	P2	A	P3	0	0
+go:P2 arrive switch	go:P1	0	tutorial	P2	B	-	0	0
+go:P2 arrive switch	go:P2	0	tutorial	P2	B	-	0	0
+go:P2 arrive switch	go:P3	1	tutorial	P2	B	P3	0	0
+go:P2 arrive switch	go:P4	0	tutorial	P2	B	-	0	0
+go:P2 arrive switch	go:Q1	0	tutorial	P2	B	-	0	0
+go:P2 arrive switch	go:Q2	0	tutorial	P2	B	-	0	0
+go:P2 arrive switch	go:missing	0	tutorial	P2	B	-	0	0
+go:P2 arrive switch	go:(null)	0	tutorial	P2	B	-	0	0
+go:P2 arrive switch	arrive	0	tutorial	P2	B	-	0	0
+go:P2 arrive switch	switch	1	tutorial	P2	A	-	0	0
+go:P2 arrive switch	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive switch	next	0	tutorial	P2	B	-	0	0
+go:P2 arrive switch	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive switch	null	0	tutorial	P2	B	-	0	0
+go:P2 arrive switch	stale	0	tutorial	P2	B	-	0	0
+go:P2 arrive go:P3 arrive	go:P1	0	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3 arrive	go:P2	1	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive	go:P3	0	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3 arrive	go:P4	0	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3 arrive	go:Q1	0	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3 arrive	go:Q2	0	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3 arrive	go:missing	0	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3 arrive	go:(null)	0	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3 arrive	arrive	0	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3 arrive	switch	1	tutorial	P3	B	-	0	0
+go:P2 arrive go:P3 arrive	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive	next	0	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3 arrive	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive	null	0	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3 arrive	stale	0	tutorial	P3	A	-	0	0
+go:P2 arrive switch go:P3	go:P1	0	tutorial	P2	B	P3	0	0
+go:P2 arrive switch go:P3	go:P2	0	tutorial	P2	B	P3	0	0
+go:P2 arrive switch go:P3	go:P3	0	tutorial	P2	B	P3	0	0
+go:P2 arrive switch go:P3	go:P4	0	tutorial	P2	B	P3	0	0
+go:P2 arrive switch go:P3	go:Q1	0	tutorial	P2	B	P3	0	0
+go:P2 arrive switch go:P3	go:Q2	0	tutorial	P2	B	P3	0	0
+go:P2 arrive switch go:P3	go:missing	0	tutorial	P2	B	P3	0	0
+go:P2 arrive switch go:P3	go:(null)	0	tutorial	P2	B	P3	0	0
+go:P2 arrive switch go:P3	arrive	1	tutorial	P3	B	-	0	0
+go:P2 arrive switch go:P3	switch	0	tutorial	P2	B	P3	0	0
+go:P2 arrive switch go:P3	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive switch go:P3	next	0	tutorial	P2	B	P3	0	0
+go:P2 arrive switch go:P3	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive switch go:P3	null	0	tutorial	P2	B	P3	0	0
+go:P2 arrive switch go:P3	stale	0	tutorial	P2	B	P3	0	0
+go:P2 arrive go:P3 arrive go:P2	go:P1	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive go:P2	go:P2	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive go:P2	go:P3	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive go:P2	go:P4	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive go:P2	go:Q1	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive go:P2	go:Q2	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive go:P2	go:missing	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive go:P2	go:(null)	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive go:P2	arrive	1	tutorial	P2	A	-	0	0
+go:P2 arrive go:P3 arrive go:P2	switch	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive go:P2	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive go:P2	next	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive go:P2	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive go:P2	null	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive go:P2	stale	0	tutorial	P3	A	P2	0	0
+go:P2 arrive go:P3 arrive switch	go:P1	0	tutorial	P3	B	-	0	0
+go:P2 arrive go:P3 arrive switch	go:P2	1	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch	go:P3	0	tutorial	P3	B	-	0	0
+go:P2 arrive go:P3 arrive switch	go:P4	1	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch	go:Q1	0	tutorial	P3	B	-	0	0
+go:P2 arrive go:P3 arrive switch	go:Q2	0	tutorial	P3	B	-	0	0
+go:P2 arrive go:P3 arrive switch	go:missing	0	tutorial	P3	B	-	0	0
+go:P2 arrive go:P3 arrive switch	go:(null)	0	tutorial	P3	B	-	0	0
+go:P2 arrive go:P3 arrive switch	arrive	0	tutorial	P3	B	-	0	0
+go:P2 arrive go:P3 arrive switch	switch	1	tutorial	P3	A	-	0	0
+go:P2 arrive go:P3 arrive switch	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch	next	0	tutorial	P3	B	-	0	0
+go:P2 arrive go:P3 arrive switch	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch	null	0	tutorial	P3	B	-	0	0
+go:P2 arrive go:P3 arrive switch	stale	0	tutorial	P3	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P2	go:P1	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P2	go:P2	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P2	go:P3	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P2	go:P4	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P2	go:Q1	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P2	go:Q2	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P2	go:missing	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P2	go:(null)	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P2	arrive	1	tutorial	P2	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P2	switch	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P2	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P2	next	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P2	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P2	null	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P2	stale	0	tutorial	P3	B	P2	0	0
+go:P2 arrive go:P3 arrive switch go:P4	go:P1	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4	go:P2	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4	go:P3	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4	go:P4	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4	go:Q1	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4	go:Q2	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4	go:missing	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4	go:(null)	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4	arrive	1	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4	switch	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4	next	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4	null	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4	stale	0	tutorial	P3	B	P4	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	go:P1	0	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	go:P2	0	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	go:P3	0	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	go:P4	0	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	go:Q1	0	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	go:Q2	0	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	go:missing	0	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	go:(null)	0	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	arrive	0	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	switch	1	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	next	1	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	null	0	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive	stale	0	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	go:P1	0	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	go:P2	0	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	go:P3	0	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	go:P4	0	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	go:Q1	0	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	go:Q2	0	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	go:missing	0	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	go:(null)	0	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	arrive	0	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	switch	1	tutorial	P4	B	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	restart	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	next	1	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	null	0	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive switch	stale	0	tutorial	P4	A	-	1	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	go:P1	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	go:P2	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	go:P3	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	go:P4	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	go:Q1	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	go:Q2	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	go:missing	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	go:(null)	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	arrive	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	switch	1	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	restart	1	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	next	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	null	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next	stale	0	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	go:P1	0	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	go:P2	0	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	go:P3	0	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	go:P4	0	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	go:Q1	0	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	go:Q2	1	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	go:missing	0	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	go:(null)	0	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	arrive	0	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	switch	1	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	restart	1	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	next	0	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	null	0	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch	stale	0	bridge	Q1	B	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	go:P1	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	go:P2	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	go:P3	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	go:P4	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	go:Q1	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	go:Q2	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	go:missing	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	go:(null)	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	arrive	1	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	switch	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	restart	1	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	next	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	null	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2	stale	0	bridge	Q1	B	Q2	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	go:P1	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	go:P2	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	go:P3	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	go:P4	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	go:Q1	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	go:Q2	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	go:missing	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	go:(null)	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	arrive	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	switch	1	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	restart	1	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	next	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	null	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive	stale	0	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	go:P1	0	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	go:P2	0	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	go:P3	0	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	go:P4	0	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	go:Q1	0	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	go:Q2	0	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	go:missing	0	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	go:(null)	0	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	arrive	0	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	switch	1	bridge	Q2	B	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	restart	1	bridge	Q1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	next	0	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	new	1	tutorial	P1	A	-	0	0
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	null	0	bridge	Q2	A	-	1	1
+go:P2 arrive go:P3 arrive switch go:P4 arrive next switch go:Q2 arrive switch	stale	0	bridge	Q2	A	-	1	1

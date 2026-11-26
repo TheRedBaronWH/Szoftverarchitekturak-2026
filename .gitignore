@@ -53,8 +53,12 @@ ExportedObj/
 .consulo/
 *.csproj
 !/Tests/TutorialRoute/TutorialRoute.csproj
+!/Tests/CoreRules/CoreRules.csproj
+!/Tools/TutorialConsole/TutorialConsole.csproj
 /Tests/*/bin/
 /Tests/*/obj/
+/Tools/TutorialConsole/bin/
+/Tools/TutorialConsole/obj/
 *.unityproj
 *.sln
 *.slnx

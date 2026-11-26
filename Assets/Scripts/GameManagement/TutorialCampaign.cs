@@ -4,6 +4,11 @@ internal static class TutorialCampaign
 {
     public static GameSession CreateSession()
     {
+        return new GameSession(new[] { CreateLevel() });
+    }
+
+    internal static LevelDefinition CreateLevel()
+    {
         var platforms = new[] { "P1", "P2", "P3", "P4" };
         var connections = new[]
         {
@@ -12,7 +17,6 @@ internal static class TutorialCampaign
             new Connection("P3", "P4", openInA: false, openInB: true)
         };
 
-        var level = new LevelDefinition("tutorial", "P1", "P4", platforms, connections);
-        return new GameSession(new[] { level });
+        return new LevelDefinition("tutorial", "P1", "P4", platforms, connections);
     }
 }
