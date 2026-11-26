@@ -19,6 +19,10 @@ public sealed class GameplayController : MonoBehaviour
     public string Platform => session.Platform;
     public bool ModeB => session.Mode == BoardMode.B;
     public bool HasWon => session.IsLevelComplete;
+    public string LevelName => session.Level.Id;
+    public string Goal => session.Level.Goal;
+    public bool HasNextLevel => session.HasNextLevel;
+    public string Feedback { get; private set; }
 
     private void OnEnable()
     {
@@ -63,12 +67,18 @@ public sealed class GameplayController : MonoBehaviour
     // Both a mouse click and a key reach the same rule in GameSession.
     public void RequestMove(string target)
     {
-        if (!IsReady || !board.TryGetPosition(target, out Vector3 destination))
+        if (!IsReady || !session.Level.HasPlatform(target)
+            || !board.TryGetPosition(target, out Vector3 destination))
             return;
 
         var game = session;
         if (game.TryStartMove(target, out var move))
+        {
+            Feedback = "";
             motion = StartCoroutine(AnimateMove(destination, () => game.CompleteMove(move)));
+        }
+        else
+            Feedback = "A lépés most nem engedélyezett: " + target;
     }
 
     public void SelectCollider(Collider hit)
@@ -90,7 +100,18 @@ public sealed class GameplayController : MonoBehaviour
     public void ToggleMode()
     {
         if (IsReady && session.TryToggleMode())
+        {
+            Feedback = "";
             board.ShowMode(ModeB, false);
+        }
+        else if (IsReady)
+            Feedback = "Mozgás közben nem válthatsz módot.";
+    }
+
+    public void NextLevel()
+    {
+        if (IsReady && session.TryNextLevel())
+            ShowSession();
     }
 
     public void RestartLevel()
@@ -122,6 +143,8 @@ public sealed class GameplayController : MonoBehaviour
         }
 
         player.position = position;
+        Feedback = "";
+        board.ShowLevel(session.Level);
         board.ShowMode(ModeB, true);
     }
 

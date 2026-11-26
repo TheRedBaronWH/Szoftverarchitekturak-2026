@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using OLE.Core;
 
 public sealed class TutorialBoard : MonoBehaviour
 {
@@ -13,6 +14,12 @@ public sealed class TutorialBoard : MonoBehaviour
 
     [SerializeField] private Platform[] platforms;
     [SerializeField] private Vector3 standingOffset = Vector3.up;
+    private LevelDefinition level;
+
+    public void ShowLevel(LevelDefinition definition)
+    {
+        level = definition;
+    }
 
     public IEnumerable<string> PlatformIds
     {
@@ -55,6 +62,26 @@ public sealed class TutorialBoard : MonoBehaviour
         {
             foreach (var cube in root.GetComponentsInChildren<NeckerCubeGFXController>())
                 cube.ShowMode(modeB, immediately);
+        }
+    }
+
+    private void OnGUI()
+    {
+        Camera camera = Camera.main;
+        if (level == null || camera == null)
+            return;
+
+        foreach (string id in level.Platforms)
+        {
+            if (!TryGetPosition(id, out Vector3 position))
+                continue;
+
+            Vector3 screen = camera.WorldToScreenPoint(position + Vector3.up * 0.35f);
+            if (screen.z <= 0f)
+                continue;
+
+            string label = id == level.Goal ? id + " (cél)" : id;
+            GUI.Box(new Rect(screen.x - 35, Screen.height - screen.y - 24, 70, 24), label);
         }
     }
 }

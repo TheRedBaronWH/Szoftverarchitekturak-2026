@@ -823,6 +823,26 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
   m_PrefabInstance: {fileID: 1873835546}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &749305 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
+  m_PrefabInstance: {fileID: 1347605539}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &749306 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
+  m_PrefabInstance: {fileID: 996415888}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &749307 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
+  m_PrefabInstance: {fileID: 1642468971}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &749308 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2145328391706269610, guid: dcc51ab62396a9540a31e63daac23de0, type: 3}
+  m_PrefabInstance: {fileID: 1150693736}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &749310
 GameObject:
   m_ObjectHideFlags: 0
@@ -876,6 +896,14 @@ MonoBehaviour:
     cube: {fileID: 749303}
   - id: P4
     cube: {fileID: 749304}
+  - id: P5
+    cube: {fileID: 749305}
+  - id: P6
+    cube: {fileID: 749306}
+  - id: P7
+    cube: {fileID: 749307}
+  - id: P8
+    cube: {fileID: 749308}
   standingOffset: {x: 0, y: 1, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
