@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7d0ff47d7744c46aa0f36344c94631e, type: 3}
+  m_Name: Presentation
+  m_EditorClassIdentifier: Assembly-CSharp::PresentationSettings
+  solidMaterial: {fileID: 2100000, guid: e2e7b1cfe5b0ebe4abd38d55375c1f8f, type: 2}
+  unlitMaterial: {fileID: 2100000, guid: a2b8111d16b145219221651c393149a6, type: 2}
+  surface: {r: 0.95, g: 0.96, b: 0.98, a: 1}
+  ink: {r: 0.09, g: 0.14, b: 0.22, a: 1}
+  accent: {r: 0.04, g: 0.62, b: 0.65, a: 1}
+  goal: {r: 0.95, g: 0.65, b: 0.2, a: 1}
+  background: {r: 0.84, g: 0.88, b: 0.93, a: 1}
+  finaleMusic: {fileID: 8300000, guid: fbdb3476f1044022830d4c1e154d45bf, type: 3}
+  musicVolume: 0.2
+  creators:
+  - Kopácsi Artem
+  - Kohár Zsombor
+  - Bencze János István
+  - Béres Mátyás

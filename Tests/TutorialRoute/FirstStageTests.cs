@@ -237,7 +237,7 @@ internal static class FirstStageTests
         Check(progress.Session.IsGameComplete, "The complete campaign is reached");
         progress.EnterMainMenu();
         Check(progress.Continue() == SaveResult.Success && progress.Session.IsGameComplete
-            && progress.Session.Level.Id == "skybridge", "Continue keeps the final victory");
+            && progress.Session.Level.Id == "paradox-stairs", "Continue keeps the final victory");
 
         progress.StartNewGame();
         WinTutorial(progress.Session);

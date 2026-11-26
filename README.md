@@ -1,136 +1,130 @@
 # Necker's Paradox
 
-Az oktatópályán a karakter P1-ről P4-re jut. A Crossroads pályán nyolc platform, egy zsákutca és négy A/B módváltás vezet P8-hoz. A Skybridge tíz platformja két útvonalat kínál P10 felé. A Unity-jelenet és a konzolos változat ugyanazokat a pályadefiníciókat és játékszabályokat használja.
+Négy pályából álló, C# és Unity alapú térbeli logikai játék. A kamera játék közben rögzített; az A/B nézőpontváltás a csapat animált Necker-kockáit és a járható lépcsőkapcsolatokat változtatja. A kapcsolatok szabályait a TutorialCampaign definiálja.
 
-## Indítás Unityben
+## Indítás
 
-1. Klónozd a projektet, majd a projekt gyökerében futtasd a `git lfs pull` parancsot a modellek és textúrák letöltéséhez.
-2. A Unity Hub **Projects → Add → Add project from disk** menüpontjában válaszd az `Assets`, `Packages` és `ProjectSettings` mappákat tartalmazó könyvtárat. Az editor verziója `6000.6.9f1`.
-3. Nyisd meg az `Assets/Scenes/GameManagement.unity` jelenetet. Kattints a **Play**, majd az **Új játék** gombra.
+1. A klónozott projekt gyökerében futtasd a `git lfs pull` parancsot. A modellek és a WAV-fájl Git LFS-ben vannak.
+2. A Unity Hubban nyisd meg az Assets, Packages és ProjectSettings mappákat tartalmazó projektet. Editor: **6000.6.9f1**.
+3. Nyisd meg az **Assets/Scenes/GameManagement.unity** jelenetet, majd **Play → Új játék**.
 
-Kattintással vagy az **1–9** billentyűkkel választhatsz platformot, a **0** a P10-et jelenti. A **Space** az A/B módot váltja, az **R** újrakezdi a pályát, az **Esc** megnyitja a szünetmenüt. Győzelem után az **N** indítja a következő pályát. A **H** egyetlen következő lépést vagy módváltást javasol.
+Windows-buildnél a Build Profiles jelenetlistája ebben a sorrendben tartalmazza az alábbiakat:
 
-Minden pályának saját elrendezése és színvilága van. A fehér platform az aktuális hely, az arany a cél, a kiemelt szín az elérhető szomszédot jelzi. A világos vonalak járható kapcsolatokat, a vékony sötét vonalak az aktuális módban lezárt kapcsolatokat mutatják.
-
-## Mentés és folytatás
-
-Az **Esc** megállítja a karakter mozgását és a pálya animációit. A szünetmenü **Folytatás** gombja vagy az újabb **Esc** ugyanonnan folytatja a mozgást. Szünet alatt a játékbillentyűk és a platformokra kattintás nem változtatják az állapotot. A menü gombjai egérrel és billentyűzettel is kezelhetők.
-
-A szünetmenü **Főmenü** gombja az utolsó teljesen elért platformot és az A/B módot a memóriában tartja meg, és automatikusan menti. A főmenü **Folytatás** gombja ezt a futó játékot részesíti előnyben a fájllal szemben. Az **Új játék** mindig az oktatópálya P1 platformjáról, A módban indul, és frissíti az automatikus mentést. A korábbi kézi mentést csak a **Mentés** vagy **F5** írja felül. Ha a főmenübe egy teljesített pályáról lépsz ki, a folytatás a következő pálya elejére visz. Az utolsó pálya után a befejezett állapot marad meg.
-
-| Művelet | Eredmény |
+| Index | Jelenet |
 | --- | --- |
-| Szünetmenü: **Mentés** / játék közben **F5** | A kiválasztott állapot kézi mentése. A szünet és a folyamatban lévő mozgás megmarad. |
-| Szünetmenü: **Betöltés** / játék közben **F9** | Visszatérés a kézi mentéshez. A régi mozgás megszakad; a szünetmenüből indított betöltés után a játék szünetben marad. |
-| Új játék, célba érő lépés, elfogadott A/B-váltás, pálya újrakezdése vagy váltása, kilépés a főmenübe, alkalmazás bezárása | Automatikus mentés az utolsó elért platformról. |
-| Főmenü: **Folytatás** alkalmazás-újraindítás után | Először az automatikus mentést ellenőrzi. Ha az hiányzik vagy nem tölthető be, a kézi mentést próbálja. |
+| 0 | GameManagement |
+| 1 | Player |
+| 2 | MainMenu |
+| 3 | SampleScene |
 
-A két mentés külön fájlban van: az automatikus előrehaladás nem írja felül a kézzel kiválasztott visszatérési pontot. Sikeres kézi betöltés után az automatikus mentés is a betöltött állapothoz igazodik. A szünetmenü **Betöltés** gombja csak érvényes kézi mentés esetén aktív; a mellette látható szöveg megmagyarázza, ha nincs használható kézi mentés. A mentés eredménye a szünetmenüben és a játék állapotsávjában is megjelenik.
+A GameManagement marad betöltve; a többi jelenet betöltését és kiürítését a GameManager végzi.
 
-A **Folytatás** gomb csak futó játék vagy ellenőrzött, betölthető mentés esetén aktív. Ha egy használhatatlan automatikus mentés helyett a kézi mentés töltődött be, a játék ezt jelzi. Egy sikertelen betöltés megőrzi a futó játékot, a szünetet és a függőben lévő mozgást. A sikertelen automatikus írás hibaüzenetet ad, de nem vonja vissza az elfogadott játékbeli műveletet.
+## Irányítás
 
-A kézi fájl az `Application.persistentDataPath` könyvtárban `progress.xml`, az automatikus `autosave.xml` néven található. Az útvonalakat a `GameplayController.SavePath` és `GameplayController.AutosavePath` tulajdonságai adják vissza. A korábbi `progress.xml` fájlok továbbra is betölthetők. A meglévő `SaveStore` ellenőrzi az adatokat és ideiglenes fájlon keresztül, atomikus cserével ír. Mozgás közbeni mentés az utolsó elért platformot rögzíti, nem a karakter két platform közötti látványpozícióját.
+| Művelet | Kezelés |
+| --- | --- |
+| Mozgás | Kattintás egy elérhető platformra vagy nyitott lépcsőre; nyílbillentyűk |
+| A/B nézőpont | **Nézőpont** gomb vagy Space |
+| Kézi mentés | **Mentés** gomb vagy F5 |
+| Kézi betöltés | **Kézi betöltés** gomb vagy F9 |
+| Szünet | **Szünet** gomb vagy Esc |
+| Pálya újrakezdése | R |
+| Tipp | H; a célplatform kiemelést kap |
+| Diagnosztika | F3 |
 
-## Pályák szerkesztése
+A korábbi 1–9 és 0 platformbillentyűk is megmaradtak, de a P11 és P12 kiválasztásához kattintást vagy nyilakat használj. A platformazonosítók és a kapcsolatok szöveges listája csak a diagnosztikában jelennek meg. Mozgás és A/B-animáció alatt újabb nézőpontváltás nem indul.
 
-A szabályok az `Assets/Scripts/GameManagement/TutorialCampaign.cs` fájlban vannak. A `SampleScene` jelenet `Tutorial Board` objektumán a `Platforms` lista kapcsolja a platformazonosítókat a csapat kockáihoz. A `Layouts` lista pályánként tárolja a pozíciókat, a kameraméretet és a színeket. A pozíciók sorrendje a pályadefiníció platformjainak sorrendje, P1-től indulva.
+## Mentés és betöltés
 
-Új játékhoz a `GameManagement` jelenetet indítsd. A jelenetkezelő tölti be a menüt és a játékos jelenetét.
+| Fájl | Ki írja? | Ki olvassa? |
+| --- | --- | --- |
+| progress.xml | **Mentés / F5** | **Betöltés / F9**, illetve a főmenü Folytatás tartalékként |
+| autosave.xml | Elfogadott lépés befejezése, A/B-váltás, újrakezdés, pályaváltás, főmenü, alkalmazás bezárása | Főmenü: **Folytatás**, ha nincs futó játék |
 
-## Konzolos próba
+A két fájl az Application.persistentDataPath könyvtárban található. **Betöltés mindig a kézi progress.xml fájlt tölti be**, akkor is, ha az automatikus mentés már másik pályán, másik platformon vagy másik módban van. A Betöltés gomb használható kézi fájl hiányában inaktív, magyarázó üzenettel.
 
-A projekt gyökerében, .NET 8 SDK-val futtasd a következő parancsot.
+A főmenü Folytatás először a memóriában megőrzött játékot használja. Alkalmazás-újraindítás után az automatikus fájlt próbálja, majd annak hiánya vagy hibája esetén a kézit. A sikertelen betöltés megőrzi a futó játékot és a függőben lévő mozgást. A fájlírás ideiglenes fájlon és atomikus cserén keresztül történik.
 
-```sh
-dotnet run --project Tools/TutorialConsole
-```
+A mentés a legutolsó teljesen elért platformot és az A/B módot rögzíti. Sikeres kézi betöltés után az automatikus mentés a betöltött állapothoz igazodik; a kézi fájl ettől nem változik. A szünetmenüből indított betöltés szünetben marad, kivéve egy már teljesített pálya betöltését: ott a befejező ablak és annak visszaszámlálása jelenik meg.
 
-Írd be egymás után az alábbi parancsokat. A `go` elindítja a mozgást, az `arrive` a Unity-animáció végének felel meg.
+## Pályák és automatikus továbblépés
 
-```text
-go P2
-arrive
-go P3
-arrive
-switch
-go P4
-arrive
-next
-go P2
-arrive
-switch
-go P5
-arrive
-switch
-go P6
-arrive
-switch
-go P7
-arrive
-switch
-go P8
-arrive
-next
-go P2
-arrive
-go P5
-arrive
-switch
-go P8
-arrive
-switch
-go P6
-arrive
-go P7
-arrive
-switch
-go P9
-arrive
-switch
-go P10
-arrive
-quit
-```
+| Pálya | Platformok | Tartalom |
+| --- | --- | --- |
+| Első lépések / tutorial | 4 | Alapmozgás és első A/B-váltás |
+| Elágazások / crossroads | 8 | Mellékág és visszatérés a fő útvonalra |
+| Égi hidak / skybridge | 10 | Két megoldható útvonal |
+| Paradox lépcsők / paradox-stairs | 12 | Három mellékág, hosszabb lépcsős útvonal és hét kötelező A/B-váltás |
 
-## Automatikus ellenőrzés
+A célra érkezéskor automatikus mentés készül. A befejező ablak **2,5 másodperc** után automatikusan elindítja a következő pályát, amelynek kezdőállapota szintén mentésre kerül. A **Következő pálya** gombbal korábban is tovább lehet lépni. Az újrakezdés és a főmenü megszakítja az aktuális visszaszámlálást.
+
+A tizedik platform fölötti két példányt a TutorialBoard a csapat eredeti prefabjának futásidejű másolatából készíti; nem kell új objektumokat kézzel bekötni a jelenetben. A meglévő három pálya azonosítói és mentési formátuma megmaradtak. Egy korábbi, már teljesített Skybridge-mentés folytatása az új negyedik pályára vezet.
+
+## Megjelenítés
+
+A PlatformSurface az animált kocka pillanatnyi meshéből számít támaszpontot és felületi orientációt. A figura, a céljel és a hidak ezeket követik A és B állapotban is. A régi, külön Foreground-passzal megjelenített gömb helyett normál mélységtesztet használó fej, törzs, karok és lábak jelennek meg. A lábak lépés közben mozognak, a talpnál kontaktárnyék van.
+
+A StairBridge a nyitott kapcsolatokhoz fehér lépcsőfelületet és sötét éleket rajzol. Zárt kapcsolatnál csak halvány, megszakított körvonal marad. A figura ugyanazt a StairProfile magasságfüggvényt követi, amelyre a lépcső felépül. A vizuális átmenet alatt új mozgás nem indul.
+
+A **Assets/Resources/OLE/Presentation** beállításban módosítható a paletta, az anyagok, a finálé zenéje, hangereje és a készítők neve.
+
+## Finálé
+
+Az utolsó célra érkezés után a játék ment, rövid gratulációt jelenít meg, majd automatikusan elindítja a zárójelenetet: lassú kameramozgás, csillagos háttér, zene és alkotói névsor.
+
+A **Kihagyás** vagy Esc a névsor végére ugrik és leállítja a zenét. A végén **Új játék** és **Főmenü** választható. Mindkettő leállítja a finálét és helyreállítja a kamerát; az új játék az első pályáról indul, a kézi mentési helyet megtartva.
+
+A csomagban lévő **Assets/Audio/OLE_Finale_Original.wav** saját, eredeti ideiglenes zene. Egy kiválasztott másik AudioCliphez importáld a hangfájlt az Assets alá, jelöld ki a Presentation beállítást, és húzd a klipet a **Finale Music** mezőre.
+
+Készítők: Kopácsi Artem, Kohár Zsombor, Bencze János István, Béres Mátyás.
+
+## A kód részei
+
+| Rész | Fájlok és felelősség |
+| --- | --- |
+| Tiszta C# szabályok | GameSession, LevelDefinition, RouteHints |
+| Játék és mentések | GameProgress, SaveStore, SaveMac |
+| Időzítés és lépcsőprofil | CompletionTimer, StairProfile; Unity-függőség nélkül tesztelhetők |
+| Unity-kapcsolat | GameplayController: jelenetkötés, bevitel, mozgás, szünet, befejezés |
+| Pálya megjelenítése | TutorialBoard, PlatformSurface, StairBridge, SceneMaterials |
+| Figura | AvatarVisual |
+| Felület | MenuUI, GameHUD, PauseMenuUI, LevelCompleteUI, MainMenuActions |
+| Finálé | FinaleDirector, PresentationSettings és az eredeti WAV |
+
+## Automatikus tesztek
+
+A különálló konzolos ellenőrzéshez .NET 8 SDK szükséges.
 
 ```sh
 dotnet run --project Tests/CoreRules
 dotnet run --project Tests/TutorialRoute
 ```
 
-A `CoreRules` a szabályokat, a mentést és a visszatöltést vizsgálja. A `TutorialRoute` mindhárom pályát, a Skybridge két útvonalát és a tippeket ellenőrzi. A pályaváltás, a régi mentések betöltése és a hibás mentés miatti állapotmegőrzés is része a vizsgálatnak. A `FirstStageTests.cs` tíz szünet- és folytatási forgatókönyvet futtat. A `SecondStageTests.cs` tizenkét további forgatókönyvben az automatikus mentést, a két mentési hely elkülönítését, a szünetben történő betöltést és a fájlhibák kezelését ellenőrzi. Mindkettő valódi ideiglenes mentési fájlokat használ.
+A CoreRules 40 szabály- és fájlkezelési tesztet, valamint egy független, 300 parancsos referenciavisszajátszást tartalmaz. A TutorialRoute ellenőrzi mind a négy pályát, a korábbi mentések kompatibilitását, a szünetet, a két mentési helyet, a visszaszámlálást és a lépcsőprofilokat.
 
-## A szünet és folytatás megvalósítása
+A RemainingIntegrationTests egy korábbi tutorial/P2/A kézi mentést állít vissza egy későbbi Crossroads/B automatikus állapot helyett, majd az új negyedik pálya közepén mentett pontot is visszatölti a frissebb automatikus győzelem helyett.
 
-| Fájl | Feladat |
-| --- | --- |
-| `Assets/Scripts/OLE.Core/Runtime/GameSession.cs` | A szünet állapota, a műveletek tiltása és a mozgás befejezésének ellenőrzése. |
-| `Assets/Scripts/OLE.Core/Runtime/GameProgress.cs` | A futó játék megtartása, az új játék, a két mentési hely és a folytatás sorrendje. Az elfogadott műveletek után automatikusan ment; Unity-függőség nélkül tesztelhető. |
-| `Assets/Scripts/GameManagement/GameplayController.cs` | A C#-állapot összekapcsolása a jelenetekkel, az animációval és az idő megállításával. |
-| `Assets/Scripts/GameManagement/PauseMenuUI.cs` | A szünetmenü négy gombjának felépítése, bekötése és a mentési visszajelzés megjelenítése. |
-| `Assets/Scripts/GameManagement/MainMenuActions.cs` | A főmenü Új játék és Folytatás gombjainak kezelése. |
-| `Assets/Scripts/GameManagement/TutorialControls.cs` | Esc és a többi billentyű kezelése, a játékbevitel tiltása szünetben. |
+A .NET-tesztek a C#-logikát vizsgálják. A Unity-felület, a mesh-megjelenítés, a hang és a Windows-build kézi ellenőrzést igényel.
 
-A `PauseMenuUI` futás közben jön létre a pálya jelenetében. Nem kell kézzel gombokat vagy eseményeket hozzáadni a jelenethez. A `GameManagement` jelenet a jelenetváltások között is betöltve marad, ezért a benne lévő `GameplayController` meg tudja tartani a `GameProgress` példányát.
+## Kézi ellenőrzés
 
-Az automatikus mentéshez a Unity-vezérlő a `GameProgress.CompleteMove`, `TryToggleMode`, `TryNextLevel` és `RestartLevel` műveleteit használja. A `GameSession` továbbra is a játékszabályokat kezeli, a `SaveStore` pedig a fájlműveleteket. A `GameProgress` harmadik, opcionális paramétere nélkül az automatikus mentés kikapcsolva marad; a Unity-vezérlő itt adja át a második mentési helyet.
+1. Indítsd a GameManagement jelenetet. Az állapotsáv és a négy kezelőgomb legyen látható; P1-felirat és kapcsolati lista csak F3 után jelenjen meg.
+2. Mozogj kattintással, a nyilakkal és nyitott lépcsőre kattintva. A talp kövesse a lépcsőfokokat, ne a két platform közti egyenes magasságát.
+3. Válts A/B-t álló helyzetben. A kocka, a figura támaszpontja és a lépcsővégek együtt változzanak; az átmenet alatt ne induljon új lépés.
+4. Tutorial P2/A állapotban válaszd a Mentés gombot. Haladj tovább P3-ra és B módba. Betöltés után P2/A térjen vissza.
+5. Ismételd meg a kézi mentést, majd fejezd be a tutorialt és haladj a második pályán. Betöltés továbbra is az első pálya mentett pontjára vigyen.
+6. Mozgás közben nyiss szünetet. A figura, a lábak és a kockák álljanak meg. Folytatás ugyanazt a mozgást fejezze be.
+7. Tutorial befejezésekor a mentési állapot jelenjen meg, majd 2,5 másodpercen belül induljon a Crossroads. Ismételt következő-pálya művelet ne ugorhasson át befejezetlen pályát.
+8. Zárd be és indítsd újra az alkalmazást F5 nélkül. A Folytatás az automatikusan mentett pályát és állapotot állítsa helyre.
+9. A negyedik pályán járd be a három mellékágat is; legyen lehetséges visszatérni. Tippel és saját megoldással is lehessen P12-re érni.
+10. A végén induljon a zárójelenet zenével és a négy névvel. Kihagyás állítsa le a zenét; Új játék után a kamera, a bevitel és az első pálya működjön. Főmenü után a zene ne maradjon szólva.
 
-## Kézi ellenőrzés Unityben és Windows-buildben
+A lépcsős pálya ellenőrző útvonala a konzolban: P1 → P2 (A) → P3 (B) → P6 (A) → P5 (B) → P8 (A) → P11 (B) → P10 (A) → P12 (B). A kapcsolatok kétirányúak; az A/B-zás mindkét irányban ugyanazt a szabályt használja.
 
-Az automatikus .NET-próbák a C#-állapotot és a mentési fájlokat vizsgálják. A Unity felületét és animációját külön ellenőrizd Play módban, majd Windows-buildben is:
+## Konzolos futtatás
 
-1. **Új játék → P2 → Space → Esc.** A szünetmenü jelenjen meg. A számgombok és a Space ne mozgassák a karaktert és ne váltsanak módot. A **Folytatás** tartsa meg P2-t és a B módot.
-2. Mozgás közben nyomj **Esc**-et. A karakter és az animáció álljon meg; folytatás után ugyanaz a mozgás fejeződjön be. A gomb megnyomása ne indítson új platformlépést.
-3. **Esc → Főmenü → Folytatás**, előzetes F5 nélkül. Ugyanaz a pálya, az utolsó elért platform és az A/B mód térjen vissza. Ha mozgás közben léptél ki, a kiinduló platform legyen az aktuális hely.
-4. Érj el egy platformot, nyomj **F5**-öt, majd zárd be az alkalmazást. Újraindítás után a főmenü **Folytatás** gombja a fájlból állítsa helyre a mentett helyet és módot.
-5. A főmenü **Új játék** gombja korábbi haladás mellett is a tutorial P1 platformjáról, A módban induljon.
-6. Teljesítsd az oktatópályát, majd válaszd az **Esc → Főmenü → Folytatás** útvonalat. A Crossroads eleje jelenjen meg. Közvetlenül a pályán továbbra is az **N** visz a következő pályára.
+```sh
+dotnet run --project Tools/TutorialConsole
+```
 
-A második szakasz ellenőrzése:
-
-1. Indíts új játékot, lépj P2-re, válts B módra, majd zárd be az alkalmazást **F5 nélkül**. Újraindítás után a **Folytatás** P2-t és B módot állítson helyre az automatikus fájlból.
-2. P2-n válaszd az **Esc → Mentés** gombot. A mentési üzenet jelenjen meg, a játék maradjon szünetben. Folytasd, lépj P3-ra, majd **Esc → Betöltés**: a karakter térjen vissza P2-re, és a szünetmenü maradjon nyitva.
-3. A kézi betöltés után zárd be és indítsd újra az alkalmazást. A főmenü **Folytatás** gombja is a betöltött P2-t állítsa helyre.
-4. Ha még nincs kézi mentés, a **Betöltés** gomb legyen inaktív akkor is, ha az automatikus folytatás működik. Ezt külön, üres mentési könyvtárral ellenőrizd, a saját mentések biztonsági másolata mellett.
-5. Mozgás közben lépj szünetbe, majd ments. A karakter ne mozduljon el és ne fejezze be a lépést; folytatás után ugyanaz a mozgás fejeződjön be.
+A go P2 parancs elindít egy lépést, az arrive a Unity-animáció végét jelenti. A switch az A/B-váltás, a hint a következő lépés, a next a teljesített pálya utáni továbblépés. A konzolban nincs grafikus visszaszámlálás vagy zárójelenet.

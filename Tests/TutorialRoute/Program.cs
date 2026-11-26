@@ -94,7 +94,7 @@ internal static class Program
         Console.WriteLine("Crossroads route passed.");
 
         Check(game.TryNextLevel() && game.Level.Id == "skybridge", "Skybridge unlocks after Crossroads");
-        Check(!game.HasNextLevel && game.Platform == "P1", "Skybridge starts at P1 and is the final level");
+        Check(game.HasNextLevel && game.Platform == "P1", "Skybridge starts at P1 before Paradox Stairs");
         Walk(game, "P2");
         Check(!game.TryStartMove("P3", out _), "Upper route requires B at P2");
         Walk(game, "P5");
@@ -108,7 +108,7 @@ internal static class Program
         Walk(game, "P9");
         Check(game.TryToggleMode(), "Final platform requires A");
         Walk(game, "P10");
-        Check(game.IsGameComplete && !game.TryNextLevel(), "Campaign ends on P10");
+        Check(game.IsLevelComplete && !game.IsGameComplete, "Skybridge ends on P10");
 
         game.RestartLevel();
         Walk(game, "P2");
@@ -119,14 +119,23 @@ internal static class Program
         Check(game.TryToggleMode(), "Upper route rejoins in B");
         Walk(game, "P6");
         FinishWithHints(game);
-        Check(game.IsGameComplete, "Both Skybridge routes reach the finish");
+        Check(game.IsLevelComplete, "Both Skybridge routes reach the finish");
         Console.WriteLine("Skybridge routes and hints passed.");
+
+        Check(game.TryNextLevel() && game.Level.Id == "paradox-stairs", "The staircase challenge follows Skybridge");
+        Check(game.Level.Platforms.Count == 12, "The staircase challenge contains twelve platforms");
+        FinishWithHints(game);
+        Check(game.IsGameComplete && game.Platform == "P12" && !game.TryNextLevel(), "The expanded campaign ends on P12");
+        Console.WriteLine("Paradox Stairs route passed.");
 
         game.StartNewGame();
         Check(game.Level.Id == "tutorial" && game.Platform == "P1", "New game returns to tutorial");
         CheckCampaignSaves();
         FirstStageTests.Run();
         SecondStageTests.Run();
+        ThirdStageTests.Run();
+        CompletionTimerTests.Run();
+        RemainingIntegrationTests.Run();
     }
 
     private static void CheckCampaignSaves()
@@ -164,7 +173,9 @@ internal static class Program
                 && loaded.Platform == "P8" && loaded.Mode == BoardMode.B,
                 "A damaged save preserves the running game");
             FinishWithHints(loaded);
-            Check(loaded.IsGameComplete, "Restored game can finish");
+            Check(loaded.IsLevelComplete && loaded.TryNextLevel(), "An older Skybridge save unlocks the staircase challenge");
+            FinishWithHints(loaded);
+            Check(loaded.IsGameComplete, "Restored game can finish the expanded campaign");
             Console.WriteLine("Campaign saves and compatibility passed.");
         }
         finally

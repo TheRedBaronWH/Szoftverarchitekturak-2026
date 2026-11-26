@@ -4,240 +4,284 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using OLE.Core;
 
+[DefaultExecutionOrder(75)]
 public sealed class TutorialBoard : MonoBehaviour
 {
-    [Serializable]
-    private struct Platform
-    {
-        public string id;
-        public Transform cube;
-    }
-
-    [Serializable]
-    private struct Layout
+    [Serializable] private struct Platform { public string id; public Transform cube; }
+    [Serializable] private struct Layout
     {
         public string levelId;
         public Vector3[] positions;
         [Min(1f)] public float cameraSize;
-        public Color platformColor;
-        public Color backgroundColor;
-        public Color connectionColor;
+        public Color platformColor, backgroundColor, connectionColor;
     }
 
     [SerializeField] private Platform[] platforms = Array.Empty<Platform>();
-    [SerializeField] private Vector3 standingOffset = Vector3.up;
     [SerializeField] private Layout[] layouts = Array.Empty<Layout>();
     [SerializeField] private Material connectionMaterial;
-
+    private readonly List<Platform> bank = new List<Platform>();
+    private readonly Dictionary<string, PlatformSurface> surfaces = new Dictionary<string, PlatformSurface>();
+    private readonly List<StairBridge> bridges = new List<StairBridge>();
+    private GameObject template;
     private LevelDefinition level;
-    private Layout layout;
-    private readonly List<LineRenderer> connections = new List<LineRenderer>();
-    private Material openMaterial;
-    private Material closedMaterial;
-    private MaterialPropertyBlock colors;
+    private BoardMode mode;
+    private float cameraSize;
+    private float framedAspect = -1;
     private GUIStyle labelStyle;
+    public SceneMaterials Materials { get; private set; }
+    public Vector3 Center { get; private set; }
+    public bool LabelsVisible { get; set; } = true;
+    public bool DebugVisible { get; set; }
+    public bool IsChanging
+    {
+        get
+        {
+            if (level == null) return false;
+            foreach (string id in level.Platforms) if (surfaces[id].IsChanging) return true;
+            return false;
+        }
+    }
 
     private void Awake()
     {
-        colors = new MaterialPropertyBlock();
-        if (connectionMaterial != null)
+        var style = PresentationSettings.Load();
+        Materials = new SceneMaterials(style, connectionMaterial);
+        bank.AddRange(platforms);
+        if (bank.Count > 0 && bank[0].cube != null)
         {
-            openMaterial = new Material(connectionMaterial);
-            closedMaterial = new Material(connectionMaterial);
+            template = Instantiate(bank[0].cube.gameObject);
+            SceneManager.MoveGameObjectToScene(template, gameObject.scene);
+            template.name = "Platform template";
+            template.SetActive(false);
+        }
+    }
+
+    private void EnsurePlatforms(LevelDefinition definition)
+    {
+        foreach (string id in definition.Platforms)
+        {
+            Platform item = bank.Find(p => p.id == id);
+            if (item.cube == null && template != null)
+            {
+                GameObject copy = Instantiate(template);
+                SceneManager.MoveGameObjectToScene(copy, gameObject.scene);
+                copy.name = "Platform " + id;
+                copy.SetActive(true);
+                item = new Platform { id = id, cube = copy.transform };
+                bank.Add(item);
+            }
+            if (item.cube != null && !surfaces.ContainsKey(id))
+            {
+                PlatformSurface surface = item.cube.GetComponent<PlatformSurface>();
+                if (surface == null) surface = item.cube.gameObject.AddComponent<PlatformSurface>();
+                surface.Initialize(Materials);
+                surfaces.Add(id, surface);
+            }
         }
     }
 
     public bool ShowLevel(LevelDefinition definition)
     {
-        if (level == definition)
-            return true;
-
+        if (level == definition) return true;
         Layout next = Array.Find(layouts, item => item.levelId == definition.Id);
-        if (next.positions == null || next.positions.Length != definition.Platforms.Count || openMaterial == null)
+        if (definition.Id == "paradox-stairs")
+            next = new Layout { levelId = definition.Id, cameraSize = 7,
+                positions = new[] {
+                    new Vector3(-6,0,-3), new Vector3(-4,0,-3), new Vector3(-2,0.8f,-1.4f),
+                    new Vector3(-4,1.7f,0.8f), new Vector3(0,2.4f,1.8f), new Vector3(0,1.6f,-1.4f),
+                    new Vector3(-2,3.2f,2.6f), new Vector3(2,3.3f,3), new Vector3(0,4.3f,5),
+                    new Vector3(5,4.5f,1.4f), new Vector3(4,4.1f,3), new Vector3(6.5f,5.3f,3.5f) } };
+        if (next.positions == null || next.positions.Length != definition.Platforms.Count)
         {
-            Debug.LogError("Missing layout or connection material for " + definition.Id, this);
+            Debug.LogError("Missing layout for " + definition.Id, this);
             return false;
         }
+        EnsurePlatforms(definition);
         foreach (string id in definition.Platforms)
-        {
-            if (Array.Find(platforms, item => item.id == id).cube == null)
-            {
-                Debug.LogError("No cube assigned to " + id, this);
-                return false;
-            }
-        }
-
+            if (!surfaces.ContainsKey(id)) { Debug.LogError("Missing platform " + id, this); return false; }
         level = definition;
-        layout = next;
-        // The scene contains the team's cube instances. Each level activates its own set.
-        foreach (GameObject root in gameObject.scene.GetRootGameObjects())
-        {
-            if (root.GetComponentInChildren<NeckerCubeGFXController>(true) != null)
-                root.SetActive(false);
-        }
-
+        foreach (Platform platform in bank) if (platform.cube != null) platform.cube.gameObject.SetActive(false);
         Vector3 center = Vector3.zero;
-        for (int index = 0; index < definition.Platforms.Count; index++)
+        for (int i = 0; i < definition.Platforms.Count; i++)
         {
-            Transform cube = Array.Find(platforms, item => item.id == definition.Platforms[index]).cube;
-            cube.position = layout.positions[index];
-            cube.gameObject.SetActive(true);
-            center += cube.position;
+            Platform platform = bank.Find(p => p.id == definition.Platforms[i]);
+            platform.cube.position = next.positions[i];
+            platform.cube.gameObject.SetActive(true);
+            surfaces[platform.id].RefreshPose();
+            center += platform.cube.position;
         }
         center /= definition.Platforms.Count;
-
-        Camera camera = Camera.main;
-        if (camera != null)
+        Center = center;
+        cameraSize = next.cameraSize;
+        FrameCamera();
+        foreach (StairBridge bridge in bridges) { bridge.gameObject.SetActive(false); Destroy(bridge.gameObject); }
+        bridges.Clear();
+        foreach (Connection edge in definition.Connections)
         {
-            camera.transform.position = center + new Vector3(0, 10, -10);
-            camera.transform.LookAt(center);
-            camera.orthographic = true;
-            camera.orthographicSize = layout.cameraSize;
-            camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = layout.backgroundColor;
+            var root = new GameObject("Stairs " + edge.First + "-" + edge.Second);
+            SceneManager.MoveGameObjectToScene(root, gameObject.scene);
+            root.transform.SetParent(transform, false);
+            var bridge = root.AddComponent<StairBridge>();
+            bridge.Initialize(edge, Materials);
+            bridges.Add(bridge);
         }
-
-        openMaterial.SetColor("_BaseColor", layout.connectionColor);
-        closedMaterial.SetColor("_BaseColor", Color.Lerp(layout.backgroundColor, Color.white, 0.2f));
-        BuildConnections();
+        RefreshBridges();
         return true;
     }
 
-    public IEnumerable<string> PlatformIds
+    public IEnumerable<string> PlatformIds => level == null ? Array.Empty<string>() : level.Platforms;
+
+    public bool TryGetPose(string id, out Pose pose)
     {
-        get
+        if (id != null && surfaces.TryGetValue(id, out PlatformSurface surface))
         {
-            foreach (Platform platform in platforms)
-                yield return platform.id;
+            pose = surface.Support;
+            return true;
         }
+        pose = default;
+        return false;
     }
 
     public bool TryGetPosition(string id, out Vector3 position)
     {
-        foreach (Platform platform in platforms)
-        {
-            if (platform.id == id && platform.cube != null)
-            {
-                position = platform.cube.TransformPoint(standingOffset);
-                return true;
-            }
-        }
-
-        position = default;
-        return false;
+        bool found = TryGetPose(id, out Pose pose);
+        position = pose.position;
+        return found;
     }
 
-    public string Identify(Collider hit)
+    public Pose MovePose(string source, string target, float position)
     {
-        foreach (Platform platform in platforms)
-        {
-            if (platform.cube != null && hit.transform.IsChildOf(platform.cube))
-                return platform.id;
-        }
+        foreach (StairBridge bridge in bridges)
+            if ((bridge.Connection.First == source && bridge.Connection.Second == target)
+                || (bridge.Connection.Second == source && bridge.Connection.First == target))
+                return bridge.Sample(source, position);
+        TryGetPose(source, out Pose first); TryGetPose(target, out Pose second);
+        return new Pose(Vector3.Lerp(first.position, second.position, position), first.rotation);
+    }
 
+    public string Identify(Collider hit, string current)
+    {
+        StairBridge bridge = hit.GetComponentInParent<StairBridge>();
+        if (bridge != null)
+            return bridge.Connection.First == current ? bridge.Connection.Second
+                : bridge.Connection.Second == current ? bridge.Connection.First : null;
+        foreach (Platform platform in bank)
+            if (platform.cube != null && hit.transform.IsChildOf(platform.cube)) return platform.id;
         return null;
+    }
+
+    public string DirectionalTarget(string current, Vector2 direction)
+    {
+        if (level == null || Camera.main == null || !TryGetPosition(current, out Vector3 origin)) return null;
+        Vector3 start = Camera.main.WorldToScreenPoint(origin);
+        string result = null;
+        float best = 0.35f;
+        foreach (string id in level.Platforms)
+        {
+            if (!level.CanTraverse(current, id, mode) || !TryGetPosition(id, out Vector3 target)) continue;
+            Vector2 delta = (Vector2)(Camera.main.WorldToScreenPoint(target) - start);
+            float score = Vector2.Dot(delta.normalized, direction.normalized);
+            if (score > best) { best = score; result = id; }
+        }
+        return result;
     }
 
     public void ShowMode(bool modeB, bool immediately)
     {
-        foreach (GameObject root in gameObject.scene.GetRootGameObjects())
+        mode = modeB ? BoardMode.B : BoardMode.A;
+        foreach (string id in level.Platforms)
         {
-            foreach (var cube in root.GetComponentsInChildren<NeckerCubeGFXController>())
-                cube.ShowMode(modeB, immediately);
+            PlatformSurface surface = surfaces[id];
+            surface.GetComponentInChildren<NeckerCubeGFXController>().ShowMode(modeB, immediately);
+            surface.RefreshPose();
         }
+        RefreshBridges();
+    }
 
-        BoardMode mode = modeB ? BoardMode.B : BoardMode.A;
-        for (int index = 0; index < connections.Count; index++)
+    public void HighlightPlatforms(string current, BoardMode state)
+    {
+        var style = PresentationSettings.Load();
+        foreach (string id in level.Platforms)
         {
-            bool open = level.Connections[index].IsOpen(mode);
-            connections[index].sharedMaterial = open ? openMaterial : closedMaterial;
-            connections[index].widthMultiplier = open ? 0.075f : 0.025f;
+            Color color = id == current ? Color.white
+                : id == level.Goal ? Color.Lerp(style.surface, style.goal, 0.5f)
+                : level.CanTraverse(current, id, state) ? Color.Lerp(style.surface, style.accent, 0.25f)
+                : style.surface;
+            surfaces[id].SetTint(color, id == level.Goal);
         }
     }
 
-    public void HighlightPlatforms(string current, BoardMode mode)
+    public void HighlightHint(string target)
     {
-        foreach (Platform platform in platforms)
-        {
-            if (platform.cube == null || !level.HasPlatform(platform.id))
-                continue;
-
-            Color tint = layout.platformColor;
-            if (platform.id == current)
-                tint = Color.white;
-            else if (platform.id == level.Goal)
-                tint = new Color(1f, 0.72f, 0.24f);
-            else if (level.CanTraverse(current, platform.id, mode))
-                tint = layout.connectionColor;
-
-            foreach (Renderer renderer in platform.cube.GetComponentsInChildren<Renderer>())
-            {
-                renderer.GetPropertyBlock(colors);
-                colors.SetColor("_BaseColor", tint);
-                renderer.SetPropertyBlock(colors);
-            }
-        }
+        if (surfaces.TryGetValue(target, out PlatformSurface surface))
+            surface.SetTint(PresentationSettings.Load().accent, target == level.Goal);
     }
 
-    private void BuildConnections()
+    public void EnsureCameraFrame()
     {
-        foreach (LineRenderer line in connections)
-        {
-            line.gameObject.SetActive(false);
-            Destroy(line.gameObject);
-        }
-        connections.Clear();
+        if (Camera.main != null && Mathf.Abs(Camera.main.aspect - framedAspect) > 0.01f) FrameCamera();
+    }
 
-        foreach (Connection edge in level.Connections)
+    private void FrameCamera()
+    {
+        Camera camera = Camera.main;
+        if (camera == null || level == null) return;
+        Vector3 up = new Vector3(0,1,1).normalized;
+        Vector3 center = Vector3.zero;
+        float min = float.PositiveInfinity, max = float.NegativeInfinity;
+        float left = float.PositiveInfinity, right = float.NegativeInfinity;
+        foreach (string id in level.Platforms)
         {
-            TryGetPosition(edge.First, out Vector3 first);
-            TryGetPosition(edge.Second, out Vector3 second);
-            var link = new GameObject("Link " + edge.First + "-" + edge.Second);
-            SceneManager.MoveGameObjectToScene(link, gameObject.scene);
-            link.transform.SetParent(transform, false);
-            var line = link.AddComponent<LineRenderer>();
-            line.useWorldSpace = true;
-            line.positionCount = 2;
-            line.numCapVertices = 6;
-            line.sharedMaterial = closedMaterial;
-            line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            line.SetPosition(0, first + Vector3.up * 0.15f);
-            line.SetPosition(1, second + Vector3.up * 0.15f);
-            connections.Add(line);
+            Vector3 point = bank.Find(p => p.id == id).cube.position;
+            center += point;
+            min = Mathf.Min(min, Vector3.Dot(point,up)-0.8f);
+            max = Mathf.Max(max, Vector3.Dot(point,up)+1.2f);
+            left = Mathf.Min(left,point.x-0.8f); right = Mathf.Max(right,point.x+0.8f);
         }
+        center /= level.Platforms.Count;
+        center.x = (left + right) / 2;
+        float aspect = Mathf.Max(0.3f,camera.aspect);
+        float size = Mathf.Max(cameraSize, (max-min)/(2*0.73f), (right-left)/(2*aspect*0.92f));
+        // Reserve the lower 23% of the viewport for the HUD; include the walker's head above each cube.
+        float focusHeight = (min+max)/2 - size*0.19f;
+        Center = center + up*(focusHeight-Vector3.Dot(center,up));
+        camera.transform.position = Center + new Vector3(0,12,-12);
+        camera.transform.LookAt(Center);
+        camera.orthographic = true; camera.orthographicSize = size;
+        camera.clearFlags = CameraClearFlags.SolidColor;
+        camera.backgroundColor = PresentationSettings.Load().background;
+        framedAspect = camera.aspect;
+    }
+
+    private void LateUpdate() => RefreshBridges();
+    private void RefreshBridges()
+    {
+        foreach (StairBridge bridge in bridges)
+            if (TryGetPosition(bridge.Connection.First, out Vector3 first)
+                && TryGetPosition(bridge.Connection.Second, out Vector3 second))
+                bridge.Refresh(first, second, mode);
     }
 
     private void OnDestroy()
     {
-        Destroy(openMaterial);
-        Destroy(closedMaterial);
+        Materials?.Destroy();
+        if (template != null) Destroy(template);
     }
 
     private void OnGUI()
     {
-        Camera camera = Camera.main;
-        if (level == null || camera == null)
-            return;
-
+        if (!LabelsVisible || !DebugVisible || level == null || Camera.main == null) return;
         if (labelStyle == null)
         {
             labelStyle = new GUIStyle(GUI.skin.box);
             labelStyle.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             labelStyle.fontSize = 14;
-            labelStyle.alignment = TextAnchor.MiddleCenter;
         }
-
         foreach (string id in level.Platforms)
         {
-            if (!TryGetPosition(id, out Vector3 position))
-                continue;
-
-            Vector3 screen = camera.WorldToScreenPoint(position + Vector3.up * 0.35f);
-            if (screen.z <= 0f)
-                continue;
-
-            string label = id == level.Goal ? id + " (cél)" : id;
-            GUI.Box(new Rect(screen.x - 38, Screen.height - screen.y - 24, 76, 24), label, labelStyle);
+            if (!TryGetPosition(id, out Vector3 position)) continue;
+            Vector3 screen = Camera.main.WorldToScreenPoint(position + Vector3.up * 0.3f);
+            if (screen.z > 0) GUI.Box(new Rect(screen.x-38, Screen.height-screen.y-24, 76, 24), id, labelStyle);
         }
     }
 }

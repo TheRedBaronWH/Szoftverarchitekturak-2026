@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static MenuUI;
 
 public sealed class PauseMenuUI : MonoBehaviour
 {
@@ -52,7 +53,7 @@ public sealed class PauseMenuUI : MonoBehaviour
         resumeButton.onClick.AddListener(game.ResumeGame);
         Button saveButton = CreateButton("Save", "Mentés", card, 62);
         saveButton.onClick.AddListener(game.SaveProgress);
-        loadButton = CreateButton("Load", "Betöltés", card, -6);
+        loadButton = CreateButton("Load", "Kézi betöltés", card, -6);
         loadButton.onClick.AddListener(game.LoadProgress);
         Button menuButton = CreateButton("Main Menu", "Főmenü", card, -74);
         menuButton.onClick.AddListener(game.ExitToMenu);
@@ -102,64 +103,7 @@ public sealed class PauseMenuUI : MonoBehaviour
 
     public void Hide()
     {
-        if (EventSystem.current != null)
-        {
-            GameObject selected = EventSystem.current.currentSelectedGameObject;
-            if (selected != null && selected.transform.IsChildOf(panel.transform))
-                EventSystem.current.SetSelectedGameObject(null);
-        }
+        ClearSelection(panel.transform);
         panel.SetActive(false);
-    }
-
-    private static RectTransform CreateRect(string name, Transform parent)
-    {
-        var item = new GameObject(name, typeof(RectTransform));
-        SceneManager.MoveGameObjectToScene(item, parent.gameObject.scene);
-        item.transform.SetParent(parent, false);
-        RectTransform rect = item.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.5f, 0.5f);
-        rect.anchorMax = new Vector2(0.5f, 0.5f);
-        return rect;
-    }
-
-    private static Button CreateButton(string name, string caption, Transform parent, float y)
-    {
-        RectTransform rect = CreateRect(name, parent);
-        rect.anchoredPosition = new Vector2(0, y);
-        rect.sizeDelta = new Vector2(300, 52);
-        Image image = rect.gameObject.AddComponent<Image>();
-        image.color = new Color(0.15f, 0.34f, 0.44f);
-        Button button = rect.gameObject.AddComponent<Button>();
-        button.targetGraphic = image;
-        button.transition = Selectable.Transition.ColorTint;
-        ColorBlock colors = button.colors;
-        colors.selectedColor = new Color(0.6f, 0.9f, 1f);
-        colors.disabledColor = new Color(0.35f, 0.35f, 0.35f);
-        colors.fadeDuration = 0f;
-        button.colors = colors;
-        RectTransform label = CreateRect("Label", rect);
-        Stretch(label);
-        AddText(label, caption, 23);
-        return button;
-    }
-
-    private static Text AddText(RectTransform rect, string caption, int size)
-    {
-        Text label = rect.gameObject.AddComponent<Text>();
-        label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        label.fontSize = size;
-        label.alignment = TextAnchor.MiddleCenter;
-        label.color = Color.white;
-        label.raycastTarget = false;
-        label.text = caption;
-        return label;
-    }
-
-    private static void Stretch(RectTransform rect)
-    {
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.zero;
     }
 }

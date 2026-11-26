@@ -10,6 +10,8 @@ public class NeckerCubeGFXController : MonoBehaviour
     private float duration = 1f;
     private float progress;
     private float target;
+    public float ModeBlend => progress;
+    public bool IsTransitioning => !Mathf.Approximately(progress, target);
 
     private void Awake()
     {

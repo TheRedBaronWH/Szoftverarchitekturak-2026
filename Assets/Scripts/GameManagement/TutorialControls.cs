@@ -24,11 +24,19 @@ public sealed class TutorialControls : MonoBehaviour
             return;
 
         Keyboard keys = Keyboard.current;
+        if (game.IsEnding)
+        {
+            if (keys != null && keys.escapeKey.wasPressedThisFrame) game.SkipFinale();
+            return;
+        }
+        if (keys != null && keys.f3Key.wasPressedThisFrame) game.ToggleDiagnostics();
         if (keys != null)
         {
             if (keys.escapeKey.wasPressedThisFrame)
             {
-                if (game.IsPaused)
+                if (game.HasWon)
+                    game.ExitToMenu();
+                else if (game.IsPaused)
                     game.ResumeGame();
                 else
                     game.PauseGame();
@@ -46,19 +54,9 @@ public sealed class TutorialControls : MonoBehaviour
                 game.RestartLevel();
                 return;
             }
-            if (keys.spaceKey.wasPressedThisFrame)
-            {
-                game.ToggleMode();
-                return;
-            }
             if (keys.nKey.wasPressedThisFrame)
             {
                 game.NextLevel();
-                return;
-            }
-            if (keys.hKey.wasPressedThisFrame)
-            {
-                game.ShowHint();
                 return;
             }
             if (keys.f5Key.wasPressedThisFrame)
@@ -72,6 +70,23 @@ public sealed class TutorialControls : MonoBehaviour
                 return;
             }
 
+            if (game.HasWon)
+                return;
+            if (keys.upArrowKey.wasPressedThisFrame) { game.RequestDirectionalMove(Vector2.up); return; }
+            if (keys.downArrowKey.wasPressedThisFrame) { game.RequestDirectionalMove(Vector2.down); return; }
+            if (keys.leftArrowKey.wasPressedThisFrame) { game.RequestDirectionalMove(Vector2.left); return; }
+            if (keys.rightArrowKey.wasPressedThisFrame) { game.RequestDirectionalMove(Vector2.right); return; }
+            if (keys.spaceKey.wasPressedThisFrame)
+            {
+                game.ToggleMode();
+                return;
+            }
+            if (keys.hKey.wasPressedThisFrame)
+            {
+                game.ShowHint();
+                return;
+            }
+
             for (int index = 0; index < PlatformKeys.Length; index++)
             {
                 if (keys[PlatformKeys[index]].wasPressedThisFrame)
@@ -82,11 +97,14 @@ public sealed class TutorialControls : MonoBehaviour
             }
         }
 
+        if (game.HasWon)
+            return;
+
         Mouse mouse = Mouse.current;
         Camera camera = Camera.main;
         if (mouse == null || camera == null || !mouse.leftButton.wasPressedThisFrame)
             return;
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        if (MenuUI.IsPointerOverUI(mouse.position.ReadValue()))
             return;
 
         Ray ray = camera.ScreenPointToRay(mouse.position.ReadValue());
@@ -97,7 +115,7 @@ public sealed class TutorialControls : MonoBehaviour
     // Passive labels only. All input is handled by the Input System above.
     private void OnGUI()
     {
-        if (!game.IsReady || game.IsPaused)
+        if (!game.IsReady || game.IsPaused || game.HasWon || !game.DebugVisible)
             return;
 
         if (statusStyle == null)
@@ -111,14 +129,9 @@ public sealed class TutorialControls : MonoBehaviour
 
         string mode = game.ModeB ? "B" : "A";
         string status = game.Feedback;
-        if (game.HasWon)
-        {
-            string completion = game.HasNextLevel ? "Pálya teljesítve! N: következő pálya" : "Minden pálya teljesítve!";
-            status = completion + "\n" + status;
-        }
 
         GUI.Box(new Rect(12, Mathf.Max(12, Screen.height - 168), Mathf.Min(620, Screen.width - 24), 156),
-            "Pálya: " + game.LevelName + "   |   Cél: " + game.Goal
+            "Pálya: " + game.LevelNumber + "/" + game.LevelCount + " " + game.LevelName + "   |   Cél: " + game.Goal
             + "\nPlatform: " + game.Platform + "   |   Mód: " + mode + "   |   Járható: " + game.ReachablePlatforms()
             + "\n1-9, 0 / kattintás: lépés   Space: A/B   R: újra   Esc: szünet"
             + "\nH: tipp   F5: mentés   F9: betöltés   N: következő pálya"

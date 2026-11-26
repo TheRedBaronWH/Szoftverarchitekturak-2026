@@ -23,6 +23,8 @@ namespace OLE.Core
         private Move pendingMove;
 
         public LevelDefinition Level => levels[levelIndex];
+        public int LevelNumber => levelIndex + 1;
+        public int LevelCount => levels.Count;
         public string Platform { get; private set; }
         public BoardMode Mode { get; private set; }
         public bool IsMoving => pendingMove != null;
