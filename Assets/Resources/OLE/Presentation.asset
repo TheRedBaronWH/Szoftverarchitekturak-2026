@@ -19,8 +19,10 @@ MonoBehaviour:
   accent: {r: 0.04, g: 0.62, b: 0.65, a: 1}
   goal: {r: 0.95, g: 0.65, b: 0.2, a: 1}
   background: {r: 0.84, g: 0.88, b: 0.93, a: 1}
-  finaleMusic: {fileID: 8300000, guid: fbdb3476f1044022830d4c1e154d45bf, type: 3}
-  musicVolume: 0.2
+  finaleMusic: {fileID: 8300000, guid: 3278f40f76664f9ea8fc0512b952fe4f, type: 3}
+  musicVolume: 0.25
+  finaleDuration: 58
+  perspectiveSeams: 1
   creators:
   - Kopácsi Artem
   - Kohár Zsombor

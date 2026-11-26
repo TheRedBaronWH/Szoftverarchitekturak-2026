@@ -4,7 +4,7 @@ internal static class TutorialCampaign
 {
     public static GameSession CreateSession()
     {
-        return new GameSession(new[] { CreateLevel(), CreateChallenge(), CreateSkybridge(), CreateParadoxStairs() });
+        return new GameSession(new[] { CreateLevel(), CreateChallenge(), CreateSkybridge(), CreateParadoxStairs(), CreateLabyrinth() });
     }
 
     internal static LevelDefinition CreateLevel()
@@ -73,5 +73,31 @@ internal static class TutorialCampaign
         };
 
         return new LevelDefinition("skybridge", "P1", "P10", platforms, connections);
+    }
+
+    internal static LevelDefinition CreateLabyrinth()
+    {
+        var platforms = new string[20];
+        for (int i = 0; i < platforms.Length; i++) platforms[i] = "P" + (i + 1);
+        var edges = new[] {
+            // Lower loop and a genuine dead end. P4 is the first switch pad.
+            new Connection("P1","P2",true,false), new Connection("P2","P3",true,false),
+            new Connection("P3","P5",true,true), new Connection("P5","P1",true,false),
+            new Connection("P5","P6",true,false), new Connection("P5","P4",true,true),
+            new Connection("P3","P7",false,true),
+            // Middle loop: switch at P9, then return through P11/P10/P8 in A.
+            new Connection("P7","P8",false,true), new Connection("P8","P10",true,true),
+            new Connection("P10","P11",true,true), new Connection("P11","P7",false,true),
+            new Connection("P11","P9",true,true), new Connection("P8","P12",true,false),
+            // Upper loop: P14 lies beyond the side landing; turning back is necessary.
+            new Connection("P12","P13",true,false), new Connection("P13","P15",true,true),
+            new Connection("P15","P16",true,true), new Connection("P16","P12",true,false),
+            new Connection("P16","P14",true,true), new Connection("P13","P17",false,true),
+            // The apparent finish is blocked in B. P18 opens it from a side branch.
+            new Connection("P17","P19",true,true), new Connection("P19","P18",true,true),
+            new Connection("P19","P20",true,false)
+        };
+        return new LevelDefinition("woven-labyrinth", "P1", "P20", platforms, edges,
+            togglePlatforms: new[] { "P4", "P9", "P14", "P18" });
     }
 }

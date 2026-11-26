@@ -58,11 +58,12 @@ public sealed class GameHUD : MonoBehaviour
         panel.SetActive(visible);
         if (!visible) return;
         heading.text = game.LevelNumber + " / " + game.LevelCount + " · " + game.LevelTitle + " · Arany jel: cél";
-        modeCaption.text = "Nézőpont: " + (game.ModeB ? "B" : "A");
+        modeCaption.text = "Nézőpont: " + (game.ModeB ? "B" : "A") + (game.HasSwitchPads && !game.CanChangeModeHere ? " · zárolt" : "");
         modeButton.interactable = !game.IsMoving && !game.IsModeChanging;
         loadButton.interactable = game.CanLoadManualSave;
         status.text = string.IsNullOrEmpty(game.Feedback)
-            ? "Kattintás / nyilak: mozgás · Space: A/B · H: tipp · F3: diagnosztika · " + game.SaveFeedback
+            ? (game.HasSwitchPads ? "A/B csak a türkiz kapcsolókon · Keresztezés ≠ csomópont · H: tipp · "
+                : "Billentyűjel / kattintás / nyilak: mozgás · Space: A/B · H: tipp · ") + game.SaveFeedback
             : game.Feedback;
     }
 }

@@ -9,6 +9,7 @@ public sealed class SceneMaterials
     public readonly Material Goal;
     public readonly Material Muted;
     public readonly Material Shadow;
+    public readonly Material Ghost;
 
     public SceneMaterials(PresentationSettings style, Material fallbackUnlit = null)
     {
@@ -19,6 +20,7 @@ public sealed class SceneMaterials
         Goal = Make(unlit, style.goal, true);
         Muted = Make(unlit, Color.Lerp(style.background, style.ink, 0.3f), true);
         Shadow = Make(unlit, new Color(0.65f, 0.69f, 0.74f), true);
+        Ghost = Make(style.solidMaterial, Color.Lerp(style.background, style.surface, 0.25f), false);
     }
 
     private static Material Make(Material template, Color color, bool unlit)
@@ -33,7 +35,7 @@ public sealed class SceneMaterials
 
     public void Destroy()
     {
-        foreach (Material material in new[] { Solid, Ink, Accent, Goal, Muted, Shadow })
+        foreach (Material material in new[] { Solid, Ink, Accent, Goal, Muted, Shadow, Ghost })
             Object.Destroy(material);
     }
 

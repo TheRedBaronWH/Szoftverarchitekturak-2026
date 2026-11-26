@@ -47,15 +47,18 @@ namespace OLE.Core
         private readonly HashSet<string> platformIds;
         private readonly Dictionary<string, List<Connection>> adjacent = new Dictionary<string, List<Connection>>(StringComparer.Ordinal);
         private readonly HashSet<string> reachable = new HashSet<string>(StringComparer.Ordinal);
+        private readonly HashSet<string> togglePlatforms;
+        private readonly HashSet<(string, BoardMode)> reachableStates = new HashSet<(string, BoardMode)>();
 
         public string Id { get; }
         public string Start { get; }
         public string Goal { get; }
         public IReadOnlyList<string> Platforms { get; }
         public IReadOnlyList<Connection> Connections { get; }
+        public bool HasSwitchPads => togglePlatforms != null;
 
         public LevelDefinition(string id, string start, string goal,
-            IEnumerable<string> platforms, IEnumerable<Connection> connections)
+            IEnumerable<string> platforms, IEnumerable<Connection> connections, IEnumerable<string> togglePlatforms = null)
         {
             if (string.IsNullOrWhiteSpace(id))
                 throw new ArgumentException("The level ID is required.", nameof(id));
@@ -71,6 +74,12 @@ namespace OLE.Core
             }
             if (!platformIds.Contains(start) || !platformIds.Contains(goal))
                 throw new ArgumentException("Start and goal must be platforms in this level.");
+            if (togglePlatforms != null)
+            {
+                this.togglePlatforms = new HashSet<string>(togglePlatforms, StringComparer.Ordinal);
+                foreach (string pad in this.togglePlatforms)
+                    if (!platformIds.Contains(pad)) throw new ArgumentException("A switch pad must be a platform.", nameof(togglePlatforms));
+            }
 
             foreach (string platform in orderedPlatforms) adjacent.Add(platform, new List<Connection>());
             var edges = new List<Connection>();
@@ -93,14 +102,21 @@ namespace OLE.Core
             Goal = goal;
             Platforms = orderedPlatforms.AsReadOnly();
             Connections = edges.AsReadOnly();
-            foreach (var state in RouteHints.Walk(this, Start, BoardMode.A)) reachable.Add(state.Platform);
+            foreach (var state in RouteHints.Walk(this, Start, BoardMode.A))
+            {
+                reachable.Add(state.Platform);
+                reachableStates.Add((state.Platform, state.Mode));
+            }
             if (!reachable.Contains(Goal))
                 throw new ArgumentException("The goal must be reachable from the start.", nameof(connections));
         }
 
         public bool HasPlatform(string id) => platformIds.Contains(id);
 
-        internal bool CanRestoreAt(string id) => reachable.Contains(id);
+        public bool CanToggleAt(string id) => HasPlatform(id) && (togglePlatforms == null || togglePlatforms.Contains(id));
+
+        internal bool CanRestoreAt(string id, BoardMode mode) => togglePlatforms == null
+            ? reachable.Contains(id) : reachableStates.Contains((id, mode));
 
         internal IEnumerable<string> OpenNeighbours(string from, BoardMode mode)
         {

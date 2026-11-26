@@ -10,10 +10,13 @@ public sealed class PresentationSettings : ScriptableObject
     public Color accent = new Color(0.04f, 0.62f, 0.65f);
     public Color goal = new Color(0.95f, 0.65f, 0.2f);
     public Color background = new Color(0.84f, 0.88f, 0.93f);
+    [Tooltip("Experimental depth seams on one connection per level; keeps the existing A/B rules.")]
+    public bool perspectiveSeams = true;
 
     [Header("Finale")]
     public AudioClip finaleMusic;
     [Range(0, 1)] public float musicVolume = 0.2f;
+    [Range(10, 60)] public float finaleDuration = 58;
     public string[] creators = { "Kopácsi Artem", "Kohár Zsombor", "Bencze János István", "Béres Mátyás" };
 
     private static PresentationSettings current;

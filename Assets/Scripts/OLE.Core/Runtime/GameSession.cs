@@ -71,7 +71,7 @@ namespace OLE.Core
 
         public bool TryToggleMode()
         {
-            if (IsPaused || IsMoving) return false;
+            if (IsPaused || IsMoving || !Level.CanToggleAt(Platform)) return false;
             Mode = Mode == BoardMode.A ? BoardMode.B : BoardMode.A;
             return true;
         }
@@ -106,7 +106,7 @@ namespace OLE.Core
         internal bool TryRestore(string levelId, string platformId, BoardMode mode)
         {
             int index = levels.FindIndex(level => level.Id == levelId);
-            if (index < 0 || !levels[index].CanRestoreAt(platformId)) return false;
+            if (index < 0 || !levels[index].CanRestoreAt(platformId, mode)) return false;
             SetPosition(index, platformId, mode);
             return true;
         }

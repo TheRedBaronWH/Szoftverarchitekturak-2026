@@ -5,11 +5,6 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(GameplayController))]
 public sealed class TutorialControls : MonoBehaviour
 {
-    private static readonly Key[] PlatformKeys =
-    {
-        Key.Digit1, Key.Digit2, Key.Digit3, Key.Digit4,
-        Key.Digit5, Key.Digit6, Key.Digit7, Key.Digit8, Key.Digit9, Key.Digit0
-    };
     private GameplayController game;
     private GUIStyle statusStyle;
 
@@ -87,9 +82,10 @@ public sealed class TutorialControls : MonoBehaviour
                 return;
             }
 
-            for (int index = 0; index < PlatformKeys.Length; index++)
+            for (int index = 0; index < PlatformShortcuts.Keys.Length; index++)
             {
-                if (keys[PlatformKeys[index]].wasPressedThisFrame)
+                if (keys[PlatformShortcuts.Keys[index]].wasPressedThisFrame
+                    || index < PlatformShortcuts.NumberPadKeys.Length && keys[PlatformShortcuts.NumberPadKeys[index]].wasPressedThisFrame)
                 {
                     game.RequestMove("P" + (index + 1));
                     return;
@@ -133,7 +129,7 @@ public sealed class TutorialControls : MonoBehaviour
         GUI.Box(new Rect(12, Mathf.Max(12, Screen.height - 168), Mathf.Min(620, Screen.width - 24), 156),
             "Pálya: " + game.LevelNumber + "/" + game.LevelCount + " " + game.LevelName + "   |   Cél: " + game.Goal
             + "\nPlatform: " + game.Platform + "   |   Mód: " + mode + "   |   Járható: " + game.ReachablePlatforms()
-            + "\n1-9, 0 / kattintás: lépés   Space: A/B   R: újra   Esc: szünet"
+            + "\nFelirat szerinti billentyű / kattintás: lépés   Space: A/B   R: újra   Esc: szünet"
             + "\nH: tipp   F5: mentés   F9: betöltés   N: következő pálya"
             + "\n" + status + "\n" + game.SaveFeedback, statusStyle);
     }

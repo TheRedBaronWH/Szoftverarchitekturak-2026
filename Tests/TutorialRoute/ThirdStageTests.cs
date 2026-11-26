@@ -83,7 +83,7 @@ internal static class ThirdStageTests
         Check(!progress.Session.IsLevelComplete && !progress.TryNextLevel(), "No victory or next level before arrival");
         Check(progress.CompleteMove(goal), "The goal arrival is accepted");
         Check(progress.Session.IsLevelComplete && progress.Session.LevelNumber == 1
-            && progress.Session.LevelCount == 4 && progress.Session.HasNextLevel,
+            && progress.Session.LevelCount == 5 && progress.Session.HasNextLevel,
             "The completed first level waits for the player's choice");
         string checkpoint = File.ReadAllText(Automatic("arrival"));
         Check(!progress.CompleteMove(goal) && !progress.Session.TryStartMove("P3", out _),
@@ -100,7 +100,7 @@ internal static class ThirdStageTests
         FinishLevel(progress);
         Check(progress.TryNextLevel(), "The Next action accepts a completed level");
         Check(progress.Session.Level.Id == "crossroads" && progress.Session.LevelNumber == 2
-            && progress.Session.LevelCount == 4 && progress.Session.Platform == "P1"
+            && progress.Session.LevelCount == 5 && progress.Session.Platform == "P1"
             && progress.Session.Mode == BoardMode.A && !progress.Session.IsLevelComplete,
             "The second level opens at its start");
         Check(!progress.TryNextLevel() && progress.Session.LevelNumber == 2,
@@ -117,7 +117,7 @@ internal static class ThirdStageTests
         FinishLevel(progress);
         Check(progress.Save() == SaveResult.Success, "Keep a manual checkpoint of the completed second level");
         progress.RestartLevel();
-        Check(progress.Session.LevelNumber == 2 && progress.Session.LevelCount == 4
+        Check(progress.Session.LevelNumber == 2 && progress.Session.LevelCount == 5
             && progress.Session.Platform == "P1" && progress.Session.Mode == BoardMode.A
             && !progress.Session.IsLevelComplete && !progress.Session.IsPaused,
             "Retry starts the same level and clears completion");

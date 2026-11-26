@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Assets/Scripts/GameManagement/WalkableFace.cs" />
+    <Compile Include="../../Assets/Scripts/GameManagement/WalkwayPath.cs" />
+    <Compile Include="../../Assets/Scripts/GameManagement/PlatformShortcuts.cs" />
+    <Compile Include="../../Assets/Scripts/OLE.Core/Runtime/StairProfile.cs" />
+  </ItemGroup>
+</Project>

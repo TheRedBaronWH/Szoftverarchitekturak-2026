@@ -55,7 +55,7 @@ internal static class RemainingIntegrationTests
             Check(progress.Save() == SaveResult.Success, "Save the new level in the middle of its route");
             Check(progress.TryToggleMode(), "Cross the upper bridge"); Walk(progress,"P10");
             Check(progress.TryToggleMode(), "Open the last staircase"); Walk(progress,"P12");
-            Check(progress.Session.IsGameComplete, "All side branches and the final route are playable");
+            Check(progress.Session.IsLevelComplete && progress.Session.HasNextLevel, "All staircase side branches and its route remain playable");
             Check(progress.Load() == SaveResult.Success && progress.Session.Level.Id == "paradox-stairs"
                 && progress.Session.Platform == "P11" && progress.Session.Mode == BoardMode.B,
                 "The new level also restores the exact manual point rather than its newer automatic victory");

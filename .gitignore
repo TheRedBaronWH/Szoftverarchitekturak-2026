@@ -54,6 +54,7 @@ ExportedObj/
 *.csproj
 !/Tests/TutorialRoute/TutorialRoute.csproj
 !/Tests/CoreRules/CoreRules.csproj
+!/Tests/PresentationGeometry/PresentationGeometry.csproj
 !/Tools/TutorialConsole/TutorialConsole.csproj
 /Tests/*/bin/
 /Tests/*/obj/

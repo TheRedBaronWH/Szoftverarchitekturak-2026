@@ -187,17 +187,20 @@ internal static class SecondStageTests
         Check(restarted.TryNextLevel(), "Paradox Stairs unlocks after Skybridge");
         SavedAt(Automatic("levels"), "paradox-stairs", "P1", BoardMode.A);
         FinishLevel(restarted);
+        Check(restarted.TryNextLevel(), "The staircase victory unlocks the labyrinth");
+        SavedAt(Automatic("levels"), "woven-labyrinth", "P1", BoardMode.A);
+        FinishLevel(restarted);
         var finished = Progress("levels");
         Check(finished.Continue() == SaveResult.Success && finished.Session.IsGameComplete,
             "The last victory stays completed after restart");
         finished.RestartLevel();
-        SavedAt(Automatic("levels"), "paradox-stairs", "P1", BoardMode.A);
+        SavedAt(Automatic("levels"), "woven-labyrinth", "P1", BoardMode.A);
         Walk(finished, "P2");
-        Check(finished.TryToggleMode(), "The next staircase edge requires B");
+        Check(!finished.TryToggleMode(), "The labyrinth requires a switch pad");
         Check(finished.Session.TryStartMove("P3", out Move interrupted), "Start a move before restart");
         finished.RestartLevel();
         Check(!finished.CompleteMove(interrupted), "Restart invalidates the old completion callback");
-        SavedAt(Automatic("levels"), "paradox-stairs", "P1", BoardMode.A);
+        SavedAt(Automatic("levels"), "woven-labyrinth", "P1", BoardMode.A);
     }
 
     private static void NewGamePreservesTheManualSlot()

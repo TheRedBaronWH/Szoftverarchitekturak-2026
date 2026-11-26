@@ -4,10 +4,10 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using static MenuUI;
 
-// A short in-engine ending: camera pullback, original music and creator credits.
+// A short in-engine ending. The assigned clip is capped at one minute and never loops.
 public sealed class FinaleDirector : MonoBehaviour
 {
-    private const float Duration = 22;
+    private float duration;
     private GameplayController game;
     private AudioSource music;
     private Camera sceneCamera;
@@ -18,6 +18,7 @@ public sealed class FinaleDirector : MonoBehaviour
     private RectTransform crawl;
     private Text title, status;
     private Button skip, replay, menu;
+    private CelebrationEffect confetti;
     public bool IsPlaying { get; private set; }
 
     public static FinaleDirector Create(GameplayController game, Transform canvas)
@@ -27,6 +28,7 @@ public sealed class FinaleDirector : MonoBehaviour
         root.gameObject.AddComponent<Image>().color = new Color(0.015f,0.025f,0.06f,0.94f);
         var director = root.gameObject.AddComponent<FinaleDirector>();
         director.Build(game);
+        director.confetti = CelebrationEffect.Create(root);
         director.gameObject.SetActive(false);
         return director;
     }
@@ -36,7 +38,7 @@ public sealed class FinaleDirector : MonoBehaviour
         this.game = game;
         PresentationSettings settings = PresentationSettings.Load();
         music = gameObject.AddComponent<AudioSource>();
-        music.playOnAwake = false; music.spatialBlend = 0; music.loop = true;
+        music.playOnAwake = false; music.spatialBlend = 0; music.loop = false;
         music.clip = settings.finaleMusic;
         var random = new System.Random(42);
         for (int i = 0; i < 64; i++)
@@ -75,6 +77,8 @@ public sealed class FinaleDirector : MonoBehaviour
     {
         if (IsPlaying) return;
         elapsed = 0; finished = false; IsPlaying = true;
+        duration = Mathf.Clamp(PresentationSettings.Load().finaleDuration, 10, 60);
+        if (music.clip != null) duration = Mathf.Min(duration, music.clip.length);
         sceneCamera = Camera.main;
         if (sceneCamera != null)
         {
@@ -87,6 +91,7 @@ public sealed class FinaleDirector : MonoBehaviour
         crawl.anchoredPosition = new Vector2(0,-450);
         status.text = game.SaveFeedback;
         gameObject.SetActive(true);
+        confetti.Play(true);
         music.volume = 0;
         if (music.clip != null) music.Play();
         if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(skip.gameObject);
@@ -96,8 +101,9 @@ public sealed class FinaleDirector : MonoBehaviour
     {
         if (!IsPlaying || finished) return;
         elapsed += Time.unscaledDeltaTime;
-        float progress = Mathf.Clamp01(elapsed / Duration);
-        crawl.anchoredPosition = new Vector2(0,Mathf.Lerp(-450,450,progress));
+        float progress = Mathf.Clamp01(elapsed / duration);
+        // Read all four names early, then leave them visible while the music finishes.
+        crawl.anchoredPosition = new Vector2(0,Mathf.Lerp(-450,0,Mathf.Clamp01(elapsed/18)));
         if (sceneCamera != null)
         {
             Vector3 offset = Quaternion.AngleAxis(progress*10,Vector3.up) * (cameraPosition-focus);
@@ -105,9 +111,9 @@ public sealed class FinaleDirector : MonoBehaviour
             sceneCamera.transform.LookAt(focus);
             sceneCamera.orthographicSize = Mathf.Lerp(cameraSize,cameraSize*1.12f,progress);
         }
-        float fade = Mathf.Min(Mathf.Clamp01(elapsed/2),Mathf.Clamp01((Duration-elapsed)/3));
+        float fade = Mathf.Min(Mathf.Clamp01(elapsed/1.5f),Mathf.Clamp01((duration-elapsed)/3));
         music.volume = PresentationSettings.Load().musicVolume * fade;
-        if (elapsed >= Duration) Skip();
+        if (elapsed >= duration) Skip();
     }
 
     public void Skip()

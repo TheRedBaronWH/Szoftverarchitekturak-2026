@@ -28,6 +28,7 @@ public sealed class TutorialBoard : MonoBehaviour
     private float cameraSize;
     private float framedAspect = -1;
     private GUIStyle labelStyle;
+    private string currentPlatform;
     public SceneMaterials Materials { get; private set; }
     public Vector3 Center { get; private set; }
     public bool LabelsVisible { get; set; } = true;
@@ -91,6 +92,17 @@ public sealed class TutorialBoard : MonoBehaviour
                     new Vector3(-4,1.7f,0.8f), new Vector3(0,2.4f,1.8f), new Vector3(0,1.6f,-1.4f),
                     new Vector3(-2,3.2f,2.6f), new Vector3(2,3.3f,3), new Vector3(0,4.3f,5),
                     new Vector3(5,4.5f,1.4f), new Vector3(4,4.1f,3), new Vector3(6.5f,5.3f,3.5f) } };
+        if (definition.Id == "woven-labyrinth")
+            next = new Layout { levelId = definition.Id, cameraSize = 8,
+                positions = new[] {
+                    new Vector3(-7,0,-4), new Vector3(-3,0,-4), new Vector3(-3,0,1),
+                    new Vector3(-7,0,2), new Vector3(-7,0,-1), new Vector3(-5,0,-1),
+                    new Vector3(4,2.4f,-3.5f), new Vector3(1,2.4f,2), new Vector3(5,2.4f,4.5f),
+                    new Vector3(5,2.4f,1.5f), new Vector3(7.5f,2.4f,-1),
+                    new Vector3(-5,4.8f,1.5f), new Vector3(2,4.8f,0.2f), new Vector3(-4.5f,4.8f,-2.5f),
+                    new Vector3(2,4.8f,-5.5f), new Vector3(-4.5f,4.8f,-5.5f),
+                    new Vector3(5.5f,7.2f,-1.8f), new Vector3(0,7.2f,-8),
+                    new Vector3(-1,7.2f,-3.5f), new Vector3(-7,7.2f,-2.5f) } };
         if (next.positions == null || next.positions.Length != definition.Platforms.Count)
         {
             Debug.LogError("Missing layout for " + definition.Id, this);
@@ -108,6 +120,7 @@ public sealed class TutorialBoard : MonoBehaviour
             platform.cube.position = next.positions[i];
             platform.cube.gameObject.SetActive(true);
             surfaces[platform.id].RefreshPose();
+            surfaces[platform.id].SetSwitchPad(definition.HasSwitchPads && definition.CanToggleAt(platform.id));
             center += platform.cube.position;
         }
         center /= definition.Platforms.Count;
@@ -122,7 +135,7 @@ public sealed class TutorialBoard : MonoBehaviour
             SceneManager.MoveGameObjectToScene(root, gameObject.scene);
             root.transform.SetParent(transform, false);
             var bridge = root.AddComponent<StairBridge>();
-            bridge.Initialize(edge, Materials);
+            bridge.Initialize(edge, Materials, IsPerspectiveEdge(definition.Id, edge));
             bridges.Add(bridge);
         }
         RefreshBridges();
@@ -200,6 +213,7 @@ public sealed class TutorialBoard : MonoBehaviour
 
     public void HighlightPlatforms(string current, BoardMode state)
     {
+        currentPlatform = current;
         var style = PresentationSettings.Load();
         foreach (string id in level.Platforms)
         {
@@ -257,9 +271,20 @@ public sealed class TutorialBoard : MonoBehaviour
     private void RefreshBridges()
     {
         foreach (StairBridge bridge in bridges)
-            if (TryGetPosition(bridge.Connection.First, out Vector3 first)
-                && TryGetPosition(bridge.Connection.Second, out Vector3 second))
+            if (surfaces.TryGetValue(bridge.Connection.First, out PlatformSurface first)
+                && surfaces.TryGetValue(bridge.Connection.Second, out PlatformSurface second))
                 bridge.Refresh(first, second, mode);
+    }
+
+    private static bool IsPerspectiveEdge(string levelId, Connection edge)
+    {
+        if (!PresentationSettings.Load().perspectiveSeams) return false;
+        string pair = edge.First + "/" + edge.Second;
+        return levelId == "tutorial" && pair == "P3/P4"
+            || levelId == "crossroads" && pair == "P5/P6"
+            || levelId == "skybridge" && pair == "P4/P6"
+            || levelId == "paradox-stairs" && pair == "P10/P12"
+            || levelId == "woven-labyrinth" && (pair == "P3/P7" || pair == "P8/P12" || pair == "P13/P17" || pair == "P19/P20");
     }
 
     private void OnDestroy()
@@ -270,18 +295,30 @@ public sealed class TutorialBoard : MonoBehaviour
 
     private void OnGUI()
     {
-        if (!LabelsVisible || !DebugVisible || level == null || Camera.main == null) return;
+        if (!LabelsVisible || level == null || Camera.main == null) return;
         if (labelStyle == null)
         {
             labelStyle = new GUIStyle(GUI.skin.box);
             labelStyle.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            labelStyle.fontSize = 14;
+            labelStyle.alignment = TextAnchor.MiddleCenter;
+            labelStyle.fontStyle = FontStyle.Bold;
         }
+        float scale = Mathf.Clamp(Screen.height / 720f, 0.9f, 1.6f);
+        labelStyle.fontSize = Mathf.RoundToInt(17 * scale);
         foreach (string id in level.Platforms)
         {
-            if (!TryGetPosition(id, out Vector3 position)) continue;
-            Vector3 screen = Camera.main.WorldToScreenPoint(position + Vector3.up * 0.3f);
-            if (screen.z > 0) GUI.Box(new Rect(screen.x-38, Screen.height-screen.y-24, 76, 24), id, labelStyle);
+            if (!surfaces.TryGetValue(id, out PlatformSurface surface)) continue;
+            Vector3 screen = Camera.main.WorldToScreenPoint(surface.LabelAnchor);
+            string caption = PlatformShortcuts.DisplayCaption(id);
+            bool pad = level.HasSwitchPads && level.CanToggleAt(id);
+            if (pad) caption += " · A/B";
+            if (DebugVisible) caption += " · " + id;
+            Color previous = GUI.backgroundColor;
+            GUI.backgroundColor = id == currentPlatform ? new Color(0.1f,0.8f,0.68f)
+                : id == level.Goal ? new Color(1,0.72f,0.2f) : Color.white;
+            float width = (DebugVisible ? 130 : pad ? 90 : 36) * scale;
+            if (screen.z > 0) GUI.Box(new Rect(screen.x-width/2, Screen.height-screen.y-30*scale, width, 28*scale), caption, labelStyle);
+            GUI.backgroundColor = previous;
         }
     }
 }

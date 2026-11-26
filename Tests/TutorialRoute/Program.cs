@@ -125,8 +125,11 @@ internal static class Program
         Check(game.TryNextLevel() && game.Level.Id == "paradox-stairs", "The staircase challenge follows Skybridge");
         Check(game.Level.Platforms.Count == 12, "The staircase challenge contains twelve platforms");
         FinishWithHints(game);
-        Check(game.IsGameComplete && game.Platform == "P12" && !game.TryNextLevel(), "The expanded campaign ends on P12");
+        Check(game.IsLevelComplete && game.Platform == "P12" && game.HasNextLevel, "Paradox Stairs unlocks the final labyrinth");
         Console.WriteLine("Paradox Stairs route passed.");
+        Check(game.TryNextLevel() && game.Level.Id == "woven-labyrinth", "The fifth level follows the staircase");
+        FinishWithHints(game);
+        Check(game.IsGameComplete && game.Platform == "P20" && !game.TryNextLevel(), "The expanded campaign ends on labyrinth P20");
 
         game.StartNewGame();
         Check(game.Level.Id == "tutorial" && game.Platform == "P1", "New game returns to tutorial");
@@ -136,6 +139,7 @@ internal static class Program
         ThirdStageTests.Run();
         CompletionTimerTests.Run();
         RemainingIntegrationTests.Run();
+        LabyrinthTests.Run();
     }
 
     private static void CheckCampaignSaves()
@@ -174,6 +178,8 @@ internal static class Program
                 "A damaged save preserves the running game");
             FinishWithHints(loaded);
             Check(loaded.IsLevelComplete && loaded.TryNextLevel(), "An older Skybridge save unlocks the staircase challenge");
+            FinishWithHints(loaded);
+            Check(loaded.TryNextLevel(), "An older staircase victory unlocks the fifth level");
             FinishWithHints(loaded);
             Check(loaded.IsGameComplete, "Restored game can finish the expanded campaign");
             Console.WriteLine("Campaign saves and compatibility passed.");

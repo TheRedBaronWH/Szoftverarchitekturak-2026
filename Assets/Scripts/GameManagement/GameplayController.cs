@@ -38,11 +38,13 @@ public sealed class GameplayController : MonoBehaviour
     public int NextLevelSeconds => Mathf.CeilToInt((float)completionTimer.Remaining);
     public bool IsMoving => session != null && session.IsMoving;
     public bool IsModeChanging => board != null && board.IsChanging;
+    public bool CanChangeModeHere => session != null && session.Level.CanToggleAt(session.Platform);
+    public bool HasSwitchPads => session != null && session.Level.HasSwitchPads;
     public bool IsEnding => finale != null && finale.IsPlaying;
     public Vector3 LevelCenter => board != null ? board.Center : Vector3.zero;
     public bool DebugVisible { get; private set; }
     public string LevelTitle => LevelName == "tutorial" ? "Első lépések" : LevelName == "crossroads" ? "Elágazások"
-        : LevelName == "skybridge" ? "Égi hidak" : "Paradox lépcsők";
+        : LevelName == "skybridge" ? "Égi hidak" : LevelName == "paradox-stairs" ? "Paradox lépcsők" : "Szőtt labirintus";
     public string Feedback { get; private set; }
     public string SaveFeedback { get; private set; }
     public string ManualSaveInfo { get; private set; }
@@ -229,6 +231,11 @@ public sealed class GameplayController : MonoBehaviour
     {
         if (!IsReady || HasWon || IsModeChanging)
             return;
+        if (!CanChangeModeHere)
+        {
+            Feedback = "Itt csak az A/B jelű türkiz kapcsolóplatformokon válthatsz nézőpontot. Járd be az oldalágakat!";
+            return;
+        }
 
         if (progress.TryToggleMode())
         {

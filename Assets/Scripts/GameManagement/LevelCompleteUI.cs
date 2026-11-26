@@ -12,6 +12,7 @@ public sealed class LevelCompleteUI : MonoBehaviour
     private Button nextButton;
     private Button restartButton;
     private Button menuButton;
+    private CelebrationEffect confetti;
 
     // Shares the pause menu's Canvas and EventSystem, but has its own panel.
     public static LevelCompleteUI Create(GameplayController game, Transform canvas)
@@ -21,6 +22,7 @@ public sealed class LevelCompleteUI : MonoBehaviour
         root.gameObject.AddComponent<Image>().color = new Color(0.01f, 0.02f, 0.04f, 0.85f);
         var menu = root.gameObject.AddComponent<LevelCompleteUI>();
         menu.Build(game);
+        menu.confetti = CelebrationEffect.Create(root);
         menu.Hide();
         return menu;
     }
@@ -77,6 +79,7 @@ public sealed class LevelCompleteUI : MonoBehaviour
         saveStatus.text = game.SaveFeedback;
         bool wasVisible = gameObject.activeSelf;
         gameObject.SetActive(true);
+        if (!wasVisible) confetti.Play(false);
         if (!wasVisible && EventSystem.current != null)
             EventSystem.current.SetSelectedGameObject(hasNext ? nextButton.gameObject : restartButton.gameObject);
     }

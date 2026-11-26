@@ -219,7 +219,7 @@ internal static class FirstStageTests
             "A second continuation cannot skip an unfinished level");
 
         // A finished campaign must remain finished when Continue has no next level.
-        for (int actions = 0; actions < 64 && !progress.Session.IsGameComplete; actions++)
+        for (int actions = 0; actions < 256 && !progress.Session.IsGameComplete; actions++)
         {
             var game = progress.Session;
             if (game.IsLevelComplete)
@@ -237,7 +237,7 @@ internal static class FirstStageTests
         Check(progress.Session.IsGameComplete, "The complete campaign is reached");
         progress.EnterMainMenu();
         Check(progress.Continue() == SaveResult.Success && progress.Session.IsGameComplete
-            && progress.Session.Level.Id == "paradox-stairs", "Continue keeps the final victory");
+            && progress.Session.Level.Id == "woven-labyrinth", "Continue keeps the final victory");
 
         progress.StartNewGame();
         WinTutorial(progress.Session);
