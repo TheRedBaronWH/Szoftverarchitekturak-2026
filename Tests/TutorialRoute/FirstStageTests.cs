@@ -218,7 +218,7 @@ internal static class FirstStageTests
         Check(progress.Continue() == SaveResult.Success && progress.Session.Level.Id == "crossroads",
             "A second continuation cannot skip an unfinished level");
 
-        // A finished campaign must remain finished when Continue has no next level.
+        // A completed campaign clears its continuation when returning to the menu.
         for (int actions = 0; actions < 256 && !progress.Session.IsGameComplete; actions++)
         {
             var game = progress.Session;
@@ -236,8 +236,8 @@ internal static class FirstStageTests
         }
         Check(progress.Session.IsGameComplete, "The complete campaign is reached");
         progress.EnterMainMenu();
-        Check(progress.Continue() == SaveResult.Success && progress.Session.IsGameComplete
-            && progress.Session.Level.Id == "woven-labyrinth", "Continue keeps the final victory");
+        Check(progress.Continue() == SaveResult.NotFound && progress.Session == null,
+            "The completed campaign cannot be continued after returning to the menu");
 
         progress.StartNewGame();
         WinTutorial(progress.Session);

@@ -9,6 +9,9 @@ public sealed class MainMenuActions : MonoBehaviour
 
     private void Awake()
     {
+        Button exit = MenuUI.CreateButton("Quit", "Kilépés", transform.parent, -124);
+        exit.onClick.AddListener(QuitGame);
+        messageLabel.GetComponent<RectTransform>().anchoredPosition = new Vector2(0,-200);
         foreach (Text label in transform.parent.GetComponentsInChildren<Text>())
             label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         if (GameManager.Instance == null)
@@ -35,5 +38,11 @@ public sealed class MainMenuActions : MonoBehaviour
             return;
         game.ContinueSavedGame();
         messageLabel.text = game.Feedback;
+    }
+
+    public void QuitGame()
+    {
+        if (game != null) game.QuitGame();
+        else ApplicationExit.Quit();
     }
 }

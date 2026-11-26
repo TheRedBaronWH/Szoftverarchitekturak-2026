@@ -41,29 +41,31 @@ public sealed class PauseMenuUI : MonoBehaviour
         panel = shade.gameObject;
 
         RectTransform card = CreateRect("Card", shade);
-        card.sizeDelta = new Vector2(600, 500);
+        card.sizeDelta = new Vector2(600, 580);
         card.gameObject.AddComponent<Image>().color = new Color(0.07f, 0.12f, 0.19f);
 
         RectTransform title = CreateRect("Title", card);
-        title.anchoredPosition = new Vector2(0, 204);
+        title.anchoredPosition = new Vector2(0, 240);
         title.sizeDelta = new Vector2(360, 44);
         AddText(title, "Szünet", 28);
 
-        resumeButton = CreateButton("Resume", "Folytatás", card, 130);
+        resumeButton = CreateButton("Resume", "Folytatás", card, 170);
         resumeButton.onClick.AddListener(game.ResumeGame);
-        Button saveButton = CreateButton("Save", "Mentés", card, 62);
+        Button saveButton = CreateButton("Save", "Mentés", card, 102);
         saveButton.onClick.AddListener(game.SaveProgress);
-        loadButton = CreateButton("Load", "Kézi betöltés", card, -6);
+        loadButton = CreateButton("Load", "Kézi betöltés", card, 34);
         loadButton.onClick.AddListener(game.LoadProgress);
-        Button menuButton = CreateButton("Main Menu", "Főmenü", card, -74);
+        Button menuButton = CreateButton("Main Menu", "Főmenü", card, -34);
         menuButton.onClick.AddListener(game.ExitToMenu);
+        Button exitButton = CreateButton("Quit", "Kilépés", card, -102);
+        exitButton.onClick.AddListener(game.QuitGame);
 
         RectTransform status = CreateRect("Save Status", card);
-        status.anchoredPosition = new Vector2(0, -142);
+        status.anchoredPosition = new Vector2(0, -180);
         status.sizeDelta = new Vector2(540, 56);
         saveStatus = AddText(status, "", 16);
         RectTransform info = CreateRect("Manual Save Info", card);
-        info.anchoredPosition = new Vector2(0, -204);
+        info.anchoredPosition = new Vector2(0, -244);
         info.sizeDelta = new Vector2(540, 50);
         manualInfo = AddText(info, "", 14);
         manualInfo.color = new Color(0.7f, 0.8f, 0.9f);

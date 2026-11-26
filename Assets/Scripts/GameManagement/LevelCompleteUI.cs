@@ -74,6 +74,7 @@ public sealed class LevelCompleteUI : MonoBehaviour
             ? progress + "\nElérted a célt. Hamarosan indul a következő pálya."
             : progress + "\nMinden pályát teljesítettél! Hamarosan indul a zárójelenet.";
         nextButton.gameObject.SetActive(hasNext);
+        restartButton.GetComponentInChildren<Text>().text = hasNext ? "Pálya újrakezdése" : "Új játék";
         restartButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, hasNext ? -30 : 2);
         menuButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, hasNext ? -94 : -62);
         saveStatus.text = game.SaveFeedback;

@@ -28,6 +28,7 @@ A GameManagement marad betöltve; a többi jelenet betöltését és kiürítés
 | Kézi mentés | **Mentés** gomb vagy F5 |
 | Kézi betöltés | **Kézi betöltés** gomb vagy F9 |
 | Szünet | **Szünet** gomb vagy Esc |
+| Kilépés az alkalmazásból | **Kilépés** a főmenüben vagy a szünetmenüben |
 | Pálya újrakezdése | R |
 | Tipp | H; a célplatform kiemelést kap |
 | Diagnosztika | F3 |
@@ -57,7 +58,7 @@ A mentés a legutolsó teljesen elért platformot és az A/B módot rögzíti. S
 | Paradox lépcsők / paradox-stairs | 12 | Három mellékág, hosszabb lépcsős útvonal és hét kötelező A/B-váltás |
 | Szőtt labirintus / woven-labyrinth | 20 | Négy magassági szint, 22 kapcsolat, három független kör, zsákutca és négy kötelező kapcsolókitérő |
 
-A célra érkezéskor automatikus mentés készül. A befejező ablak **2,5 másodperc** után automatikusan elindítja a következő pályát, amelynek kezdőállapota szintén mentésre kerül. A **Következő pálya** gombbal korábban is tovább lehet lépni. Az újrakezdés és a főmenü megszakítja az aktuális visszaszámlálást.
+Az első négy pálya céljára érkezéskor automatikus mentés készül; az ötödik végén mindkét mentési hely törlődik. A befejező ablak **2,5 másodperc** után automatikusan elindítja a következő pályát, amelynek kezdőállapota szintén mentésre kerül. A **Következő pálya** gombbal korábban is tovább lehet lépni. Az újrakezdés és a főmenü megszakítja az aktuális visszaszámlálást.
 
 A tizedik platform fölötti két példányt a TutorialBoard a csapat eredeti prefabjának futásidejű másolatából készíti; nem kell új objektumokat kézzel bekötni a jelenetben. A meglévő három pálya azonosítói és mentési formátuma megmaradtak. Egy korábbi, már teljesített Skybridge-mentés folytatása az új negyedik pályára vezet.
 
@@ -71,9 +72,9 @@ A **Assets/Resources/OLE/Presentation** beállításban módosítható a paletta
 
 ## Finálé
 
-Az utolsó célra érkezés után a játék ment, rövid gratulációt jelenít meg, majd automatikusan elindítja a zárójelenetet: lassú kameramozgás, csillagos háttér, zene és alkotói névsor.
+Az ötödik pálya céljára érkezéskor a játék törli a kézi és automatikus mentési helyet, rövid gratulációt jelenít meg, majd automatikusan elindítja a zárójelenetet: lassú kameramozgás, csillagos háttér, zene és alkotói névsor.
 
-A **Kihagyás** vagy Esc a névsor végére ugrik és leállítja a zenét. A végén **Új játék** és **Főmenü** választható. Mindkettő leállítja a finálét és helyreállítja a kamerát; az új játék az első pályáról indul, a kézi mentési helyet megtartva.
+A **Kihagyás** vagy Esc a névsor végére ugrik és leállítja a zenét. A végén **Új játék** és **Főmenü** választható. Mindkettő leállítja a finálét és helyreállítja a kamerát. Befejezett kampány után az új játék az első pályáról indul; a régi kézi mentés már nem marad meg.
 
 A beállított **Assets/Audio/OLE_Finale_User.ogg** a felhasználó által adott Star Wars.mp3 első **58 másodperce**, három másodperces lekeveréssel. Nem ismétlődik; a FinaleDirector más klip esetén is legfeljebb 60 másodpercig játszik. Az OLE_Finale_Original.wav megmaradt tartaléknak. A Presentation / Finale Music mezőben cserélhető a klip. A pályák végén rövid konfetti, a fináléban nagyobb színes konfettieső jelenik meg.
 
@@ -153,3 +154,15 @@ A `dotnet run --project Tests/TutorialRoute` a TraversalMatrixTests segítségé
 A natív Unity-ellenőrzéshez indítsd a **GameManagement → Play → Új játék** folyamatot, várd meg, hogy a figura álljon, majd válaszd a **Tools → OLE → Check all level boards (Play Mode)** menüpontot. Ez a tényleges Unity Animatorral és fizikával végigellenőrzi az öt tábla mindkét A/B állapotát: az aktív kockák számát, a feliratok célját, a lépcsők MeshCollider-raycastját és a mozgási végpontokat mindkét irányban. Az eredmény a Console ablakban `OLE board check PASS`, hiba esetén konkrét pálya és kapcsolat. A futó játékállapot és a mentési fájlok nem módosulnak; az eredeti tábla a vizsgálat után visszaáll.
 
 Kézi regresszió: tutorial P3-on válts B-re, majd külön próbáld a 4-es billentyűt, a 4-es kis feliratot és a lépcsőre kattintást. R után ismételd meg. A módban a P3–P4 kapcsolat maradjon zárt.
+
+## Befejezett kampány és kilépés
+
+**A teljes öt pálya befejezése törli a progress.xml és autosave.xml fájlokat.** A gratuláció és a stáblista az élő memóriabeli végállapottal tovább működik. A finálé indulása, a Főmenü és a Kilépés/OnApplicationQuit nem írhatja vissza a befejezett mentést. A főmenübe visszalépés eldobja a befejezett memóriabeli folytatást is; a Folytatás inaktív marad, és az Új játék a tutorial P1/A állapotából indul. Régebbi verzióval írt, már teljesített ötödik pályás mentés is törlődik a folytatás ellenőrzésekor.
+
+A törlés csak a két mentési helyet és az adott aláírt helyhez tartozó .key fájlt érinti, más beállításokat nem. Törlési hiba esetén a felület hibát jelez; későbbi kilépési művelet újra megpróbálja a törlést.
+
+A kampány befejezése előtti Kilépés továbbra is automatikusan ment. Szünet vagy megkezdett lépés közbeni kilépés a legutolsó elért platformot tárolja. A kézi mentési helyet az automatikus mentés továbbra sem írja felül.
+
+A **Kilépés** gomb a főmenüben és a szünetmenüben is elérhető. Windows-buildben bezárja az alkalmazást; Unity Editorban a Play Mode-ot állítja le.
+
+A CompletionCleanupTests ellenőrzi az azonnali törlést a végső érkezéskor, a köztes pályák mentéseinek megőrzését, az F5/F9 és ismételt kilépési callbackek védelmét, a régi befejezett mentések kezelését, az új kampány kezdőállapotát és a törlési hiba utáni újrapróbálást.

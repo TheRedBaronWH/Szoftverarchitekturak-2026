@@ -121,6 +121,22 @@ namespace OLE.Core
             catch (NotSupportedException) { return SaveResult.IoError; }
         }
 
+        // Delete only this slot and its optional verification key, never the save directory.
+        public SaveResult Delete()
+        {
+            try
+            {
+                File.Delete(path);
+                if (mac != null) File.Delete(path + ".key");
+                return SaveResult.Success;
+            }
+            catch (FileNotFoundException) { return SaveResult.Success; }
+            catch (DirectoryNotFoundException) { return SaveResult.Success; }
+            catch (IOException) { return SaveResult.IoError; }
+            catch (UnauthorizedAccessException) { return SaveResult.IoError; }
+            catch (NotSupportedException) { return SaveResult.IoError; }
+        }
+
         internal void WriteAtomically(Action<Stream> write)
         {
             string directory = Path.GetDirectoryName(path);

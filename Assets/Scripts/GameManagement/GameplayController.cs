@@ -376,6 +376,11 @@ public sealed class GameplayController : MonoBehaviour
     {
         if (!IsReady)
             return;
+        if (session.IsGameComplete)
+        {
+            progress.Autosave(); ReportAutosave(); RefreshManualSave();
+            return;
+        }
 
         Feedback = SaveMessage(progress.Save(), "Kézi mentés kész.");
         SaveFeedback = Feedback;
@@ -431,6 +436,13 @@ public sealed class GameplayController : MonoBehaviour
 
     private void ReportAutosave()
     {
+        if (progress.LastCleanupResult.HasValue)
+        {
+            SaveFeedback = progress.LastCleanupResult == SaveResult.Success
+                ? "Játék teljesítve. A mentések törölve; az új játék az első pályáról indul."
+                : "A mentések törlése nem sikerült. " + SaveMessage(progress.LastCleanupResult.Value, "");
+            return;
+        }
         if (!progress.LastAutosaveResult.HasValue)
             return;
         SaveFeedback = progress.LastAutosaveResult == SaveResult.Success
@@ -484,6 +496,17 @@ public sealed class GameplayController : MonoBehaviour
         if (pauseMenu != null)
             pauseMenu.gameObject.SetActive(false);
         scenes.ExitToMainMenu();
+    }
+
+    public void QuitGame()
+    {
+        // The final-session guard in GameProgress also applies to this callback
+        // and OnApplicationQuit, so neither can recreate a completed save.
+        progress?.Autosave();
+        StopMotion(); session?.CancelMove(); session?.Resume();
+        RestoreTime();
+        if (finale != null) finale.Stop();
+        ApplicationExit.Quit();
     }
 
     private void ShowSession()

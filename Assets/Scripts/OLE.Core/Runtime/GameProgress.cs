@@ -11,6 +11,7 @@ namespace OLE.Core
 
         public GameSession Session { get; private set; }
         public SaveResult? LastAutosaveResult { get; private set; }
+        public SaveResult? LastCleanupResult { get; private set; }
         public bool UsedManualSaveFallback { get; private set; }
 
         public GameProgress(Func<GameSession> createSession, SaveStore saves, SaveStore autosaves = null)
@@ -22,7 +23,9 @@ namespace OLE.Core
 
         public void StartNewGame()
         {
+            if (Session != null && Session.IsGameComplete) ClearCompletedSaves();
             Adopt(createSession());
+            LastCleanupResult = null;
             UsedManualSaveFallback = false;
             Autosave();
         }
@@ -30,7 +33,11 @@ namespace OLE.Core
         public SaveResult CheckContinuation()
         {
             if (Session != null)
-                return SaveResult.Success;
+            {
+                if (!Session.IsGameComplete) return SaveResult.Success;
+                ClearCompletedSaves();
+                return SaveResult.NotFound;
+            }
 
             return ReadContinuation(out _, out _);
         }
@@ -38,6 +45,11 @@ namespace OLE.Core
         public SaveResult Continue()
         {
             UsedManualSaveFallback = false;
+            if (Session != null && Session.IsGameComplete)
+            {
+                ClearCompletedSaves();
+                return SaveResult.NotFound;
+            }
             if (Session == null)
             {
                 SaveResult result = ReadContinuation(out GameSession loaded, out bool fallback);
@@ -61,18 +73,36 @@ namespace OLE.Core
             fallback = false;
             SaveResult automatic = autosaves == null ? SaveResult.NotFound : autosaves.LoadInto(loaded);
             if (automatic == SaveResult.Success)
-                return automatic;
+                return ValidateContinuation(loaded);
 
             SaveResult manual = saves.LoadInto(loaded);
             if (manual == SaveResult.Success)
             {
                 fallback = automatic != SaveResult.NotFound;
-                return manual;
+                return ValidateContinuation(loaded);
             }
             return automatic != SaveResult.NotFound ? automatic : manual;
         }
 
-        public SaveResult CheckManualSave() => saves.LoadInto(createSession());
+        public SaveResult CheckManualSave() => Session != null && Session.IsGameComplete
+            ? SaveResult.NotFound : saves.LoadInto(createSession());
+
+        private SaveResult ValidateContinuation(GameSession loaded)
+        {
+            if (!loaded.IsGameComplete) return SaveResult.Success;
+            // A completed save from an older build must not resurrect the last level.
+            ClearCompletedSaves();
+            return SaveResult.NotFound;
+        }
+
+        private void ClearCompletedSaves()
+        {
+            SaveResult manual = saves.Delete();
+            SaveResult automatic = autosaves == null ? SaveResult.Success : autosaves.Delete();
+            LastCleanupResult = manual != SaveResult.Success ? manual : automatic;
+            LastAutosaveResult = null;
+            UsedManualSaveFallback = false;
+        }
 
         public void EnterMainMenu()
         {
@@ -82,6 +112,7 @@ namespace OLE.Core
             Session.CancelMove();
             Session.Resume();
             Autosave();
+            if (Session.IsGameComplete) Session = null;
         }
 
         public bool CompleteMove(Move move)
@@ -112,6 +143,7 @@ namespace OLE.Core
         {
             if (Session == null)
                 return;
+            if (Session.IsGameComplete) { StartNewGame(); return; }
             Session.RestartLevel();
             Autosave();
         }
@@ -119,21 +151,40 @@ namespace OLE.Core
         // Unity also calls this before quitting. An unfinished move saves its source platform.
         public void Autosave()
         {
+            if (Session != null && Session.IsGameComplete)
+            {
+                ClearCompletedSaves();
+                return;
+            }
             if (Session != null && autosaves != null)
+            {
+                LastCleanupResult = null;
                 LastAutosaveResult = autosaves.Save(Session);
+            }
         }
 
         public SaveResult Save()
         {
+            if (Session != null && Session.IsGameComplete)
+            {
+                ClearCompletedSaves();
+                return SaveResult.NotFound;
+            }
             return Session == null ? SaveResult.NotFound : saves.Save(Session);
         }
 
         public SaveResult Load(bool keepPaused = false)
         {
+            if (Session != null && Session.IsGameComplete) return SaveResult.NotFound;
             var loaded = createSession();
             SaveResult result = saves.LoadInto(loaded);
             if (result == SaveResult.Success)
             {
+                if (loaded.IsGameComplete)
+                {
+                    ClearCompletedSaves();
+                    return SaveResult.NotFound;
+                }
                 Adopt(loaded);
                 if (keepPaused)
                     Session.Pause();

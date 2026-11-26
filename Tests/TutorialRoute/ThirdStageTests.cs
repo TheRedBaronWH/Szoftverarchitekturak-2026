@@ -159,11 +159,11 @@ internal static class ThirdStageTests
             "Final victory has no next-level action");
         Check(!progress.TryNextLevel(), "Next cannot wrap the finished campaign");
         var restarted = Progress("final");
-        Check(restarted.Continue() == SaveResult.Success && restarted.Session.IsGameComplete
-            && restarted.Session.LevelNumber == count, "App restart retains the final victory");
-        restarted.RestartLevel();
-        Check(restarted.Session.LevelNumber == count && restarted.Session.Platform == "P1"
-            && !restarted.Session.IsLevelComplete, "Final-level Retry stays on the last level");
+        Check(restarted.Continue() == SaveResult.NotFound && restarted.Session == null,
+            "App restart has no completed-campaign continuation");
+        progress.RestartLevel();
+        Check(progress.Session.LevelNumber == 1 && progress.Session.Platform == "P1"
+            && !progress.Session.IsLevelComplete, "The final New Game action returns to the tutorial");
     }
 
     private static void MenuContinuationKeepsItsPreviousBehaviour()
